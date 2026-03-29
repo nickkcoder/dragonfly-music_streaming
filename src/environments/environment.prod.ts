@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:4000',
-  mediaBaseUrl: 'http://localhost:5000'
+  apiBaseUrl: 'https://dragonfly-api.up.railway.app',
+  mediaBaseUrl: 'https://dragonfly-media.up.railway.app'
 };
+

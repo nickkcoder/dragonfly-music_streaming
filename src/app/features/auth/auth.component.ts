@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
 import { Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 import { AuthService, LoginCredentials, RegisterPayload } from '../../core/services/auth.service';
 
 @Component({
@@ -66,14 +67,19 @@ export class AuthComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.authService.register(this.registerData).subscribe({
+    const { email, password } = this.registerData;
+
+    this.authService.register(this.registerData).pipe(
+      switchMap(() => this.authService.login({ email, password }))
+    ).subscribe({
       next: () => {
-        this.isLogin = true;
-        this.loginData.email = this.registerData.email;
-        this.errorMessage = 'Registration successful! Please log in.';
+        this.close();
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Registration failed. Please try again.';
+        // If login after register fails, fall back to the login form pre-filled
+        this.isLogin = true;
+        this.loginData.email = email;
+        this.errorMessage = err.error?.message || 'Registration successful! Please log in.';
       }
     });
   }

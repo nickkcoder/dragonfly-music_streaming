@@ -166,9 +166,17 @@ export class SettingsComponent implements OnInit {
       genre: this.artistData.genre.trim()
     }).subscribe({
       next: () => {
-        this.artistMessage = 'Artist access granted. You can now publish releases.';
         this.artistGranted = true;
         this.artistBusy = false;
+        // Sync the role in AuthService so role$ and isArtist$ update immediately
+        this.authService.refreshRole().subscribe({
+          next: () => {
+            this.artistMessage = 'Artist access granted. You can now publish releases.';
+          },
+          error: () => {
+            this.artistMessage = 'Artist access granted. You can now publish releases.';
+          }
+        });
       },
       error: (err) => {
         this.artistError = err?.error?.message || 'Could not switch to artist role.';

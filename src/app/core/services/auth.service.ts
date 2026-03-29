@@ -105,6 +105,11 @@ export class AuthService {
     return this.roleSubject.value;
   }
 
+  /** Force re-fetch the role from the server (e.g. after becoming an artist). */
+  refreshRole(): Observable<string> {
+    return this.refreshRoleFromProfile(true);
+  }
+
   logout(): void {
     this.invalidateSession();
   }

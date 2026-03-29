@@ -206,6 +206,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
 
     const direct = this.normalizeRole(user?.role);
+    const roles = this.normalizeRole(user?.roles);          // ← backend uses 'roles' (plural)
     const userRole = this.normalizeRole(user?.user_role);
     const roleName = this.normalizeRole(user?.role_name);
     const camel = this.normalizeRole(user?.userRole);
@@ -220,7 +221,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.normalizeRole(user?.role?.code) ||
       this.normalizeRole(user?.role?.id);
 
-    return direct || userRole || roleName || camel || roleId || roleCode || accountType || type || permission || nested || 'user';
+    return direct || roles || userRole || roleName || camel || roleId || roleCode || accountType || type || permission || nested || 'user';
   }
 
   isKnownRole(role: string): boolean {
