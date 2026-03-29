@@ -8,7 +8,7 @@ const cors = require('cors');
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: process.env.FRONTEND_ORIGIN || 'http://localhost:4200',
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
