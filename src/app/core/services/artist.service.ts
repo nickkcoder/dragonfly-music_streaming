@@ -96,51 +96,58 @@ export class ArtistService {
       return throwError(() => new Error('Add at least one track.'));
     }
 
-    const trackRequests = trackInputs.map((track) => {
-      const trackTitle = String(track.title || '').trim();
-      const orderNumber = Number(track.order_number);
+    // Fetch the artist ID first so every upload carries it (handles stale JWTs)
+    return this.getMyArtistId().pipe(
+      catchError(() => of({ artist_id: undefined as any })),
+      switchMap(({ artist_id }) => {
 
-      if (!trackTitle || !Number.isInteger(orderNumber) || orderNumber <= 0) {
-        return throwError(() => new Error('Each track requires title and valid order.'));
-      }
+        const trackRequests = trackInputs.map((track) => {
+          const trackTitle = String(track.title || '').trim();
+          const orderNumber = Number(track.order_number);
 
-      const audioUrl = String(track.audio_url || '').trim();
-      const audio$ = track.audio_file
-        ? this.mediaService.uploadSongFile(track.audio_file)
-        : (audioUrl ? of(audioUrl) : throwError(() => new Error(`Track "${trackTitle}" needs an audio file or URL.`)));
-
-      return audio$.pipe(
-        map((fileUrl) => {
-          const out: any = {
-            title: trackTitle,
-            file_url: fileUrl,
-            order_number: orderNumber
-          };
-          const genreId = Number(track.genre);
-          if (Number.isInteger(genreId) && genreId > 0) {
-            out.genre_id = genreId;
+          if (!trackTitle || !Number.isInteger(orderNumber) || orderNumber <= 0) {
+            return throwError(() => new Error('Each track requires title and valid order.'));
           }
-          return out;
-        })
-      );
-    });
 
-    const submit = (coverImage?: string) => forkJoin(trackRequests).pipe(
-      switchMap((tracks) => this.api.post('api/songs/albums', {
-        title,
-        release_date: payload.release_date || null,
-        cover_image: coverImage || null,
-        tracks
-      }))
+          const audioUrl = String(track.audio_url || '').trim();
+          const audio$ = track.audio_file
+            ? this.mediaService.uploadSongFile(track.audio_file, artist_id)
+            : (audioUrl ? of(audioUrl) : throwError(() => new Error(`Track "${trackTitle}" needs an audio file or URL.`)));
+
+          return audio$.pipe(
+            map((fileUrl) => {
+              const out: any = {
+                title: trackTitle,
+                file_url: fileUrl,
+                order_number: orderNumber
+              };
+              const genreId = Number(track.genre);
+              if (Number.isInteger(genreId) && genreId > 0) {
+                out.genre_id = genreId;
+              }
+              return out;
+            })
+          );
+        });
+
+        const submit = (coverImage?: string) => forkJoin(trackRequests).pipe(
+          switchMap((tracks) => this.api.post('api/songs/albums', {
+            title,
+            release_date: payload.release_date || null,
+            cover_image: coverImage || null,
+            tracks
+          }))
+        );
+
+        if (albumCoverFile) {
+          return this.mediaService.uploadImageFile(albumCoverFile, artist_id).pipe(
+            switchMap((coverImage) => submit(coverImage))
+          );
+        }
+
+        return submit();
+      })
     );
-
-    if (albumCoverFile) {
-      return this.mediaService.uploadImageFile(albumCoverFile).pipe(
-        switchMap((coverImage) => submit(coverImage))
-      );
-    }
-
-    return submit();
   }
 
   private tryGet<T>(endpoints: string[]): Observable<T> {

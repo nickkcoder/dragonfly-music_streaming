@@ -160,7 +160,7 @@ export class ArtistReleasesComponent implements OnInit {
         title,
         genre: genre || undefined,
         cover_image: undefined
-      }, this.selectedSingleSongFile, undefined).subscribe({
+      }, this.selectedSingleSongFile, this.artistId ?? undefined).subscribe({
         next: () => {
           this.submitMessage = 'Single uploaded successfully.';
           this.singleReleaseData = { title: '', genre: '', audio_url: '' };
