@@ -62,7 +62,7 @@ async function register(req, res) {
             }
 
             await conn.query(
-                'INSERT INTO Artist (artist_name, bio, country, user_id) VALUES (?, ?, ?, ?)',
+                'INSERT INTO artist (artist_name, bio, country, user_id) VALUES (?, ?, ?, ?)',
                 [artist_name, bio || null, country || null, user_id]
             );
 
@@ -199,7 +199,7 @@ async function getProfile(req, res) {
         // If artist, fetch artist details
         if (user.roles === 'artist') {
             const [artistRows] = await pool.query(
-                'SELECT * FROM Artist WHERE user_id = ?',
+                'SELECT * FROM artist WHERE user_id = ?',
                 [user_id]
             );
 

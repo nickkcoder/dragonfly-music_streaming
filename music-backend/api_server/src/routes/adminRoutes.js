@@ -164,13 +164,13 @@ async function restoreArtistBundle(conn, payload) {
     }
 
     const artist = payload.artist;
-    const [artistExists] = await conn.query('SELECT artist_id FROM Artist WHERE artist_id = ?', [artist.artist_id]);
+    const [artistExists] = await conn.query('SELECT artist_id FROM artist WHERE artist_id = ?', [artist.artist_id]);
     if (artistExists.length > 0) {
         throw new Error('Cannot restore artist: artist_id already exists');
     }
 
     await conn.query(
-        `INSERT INTO Artist (artist_id, artist_name, bio, img_url, verified, created_at)
+        `INSERT INTO artist (artist_id, artist_name, bio, img_url, verified, created_at)
          VALUES (?, ?, ?, ?, ?, ?)`,
         [
             artist.artist_id,
@@ -460,7 +460,7 @@ router.get('/artists', authMiddleware, requireRole('admin'), async (req, res) =>
     try {
         const [rows] = await pool.query(
             `SELECT a.*, aa.user_id, u.username, u.email
-             FROM Artist a
+             FROM artist a
              LEFT JOIN artist_acc aa ON aa.artist_id = a.artist_id
              LEFT JOIN users u ON u.user_id = aa.user_id
              ORDER BY a.created_at DESC`
@@ -501,7 +501,7 @@ router.post('/artists', authMiddleware, requireRole('admin'), async (req, res) =
         await ensureArtistGenreColumn();
 
         const [result] = await pool.query(
-            'INSERT INTO Artist (artist_name, bio, genre, img_url, verified) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO artist (artist_name, bio, genre, img_url, verified) VALUES (?, ?, ?, ?, ?)',
             [String(artist_name).trim(), bio || null, genre || null, img_url || null, false]
         );
 
@@ -515,7 +515,7 @@ router.post('/artists', authMiddleware, requireRole('admin'), async (req, res) =
     }
 });
 
-// Update artist profile image (admin)
+// UPDATE artist profile image (admin)
 router.put('/artists/:artist_id/image', authMiddleware, requireRole('admin'), async (req, res) => {
     try {
         const artist_id = req.params.artist_id;
@@ -526,7 +526,7 @@ router.put('/artists/:artist_id/image', authMiddleware, requireRole('admin'), as
         }
 
         const [result] = await pool.query(
-            'UPDATE Artist SET img_url = ? WHERE artist_id = ?',
+            'UPDATE artist SET img_url = ? WHERE artist_id = ?',
             [imgUrl, artist_id]
         );
 
@@ -548,7 +548,7 @@ router.delete('/artists/:artist_id', authMiddleware, requireRole('admin'), async
         const artist_id = req.params.artist_id;
         await conn.beginTransaction();
 
-        const [artistRows] = await conn.query('SELECT * FROM Artist WHERE artist_id = ?', [artist_id]);
+        const [artistRows] = await conn.query('SELECT * FROM artist WHERE artist_id = ?', [artist_id]);
         if (artistRows.length === 0) {
             await conn.rollback();
             return res.status(404).json({ message: 'Artist not found' });
@@ -570,7 +570,7 @@ router.delete('/artists/:artist_id', authMiddleware, requireRole('admin'), async
 
         await conn.query('DELETE FROM songs WHERE artist_id = ?', [artist_id]);
         await conn.query('DELETE FROM artist_acc WHERE artist_id = ?', [artist_id]);
-        await conn.query('DELETE FROM Artist WHERE artist_id = ?', [artist_id]);
+        await conn.query('DELETE FROM artist WHERE artist_id = ?', [artist_id]);
 
         await conn.commit();
         return res.json({ success: true, message: 'Artist deleted', undo_window_minutes: UNDO_WINDOW_MINUTES });
@@ -684,7 +684,7 @@ router.post('/albums', authMiddleware, requireRole('admin'), async (req, res) =>
 
         await conn.beginTransaction();
 
-        const [artistRows] = await conn.query('SELECT artist_id FROM Artist WHERE artist_id = ?', [artistId]);
+        const [artistRows] = await conn.query('SELECT artist_id FROM artist WHERE artist_id = ?', [artistId]);
         if (artistRows.length === 0) {
             await conn.rollback();
             return res.status(404).json({ message: 'Artist not found' });
@@ -820,7 +820,7 @@ router.post('/verify-artist/:artist_id', authMiddleware, requireRole('admin'), a
     try {
         const artist_id = req.params.artist_id;
 
-        await pool.query('UPDATE Artist SET verified = ? WHERE artist_id = ?', [true, artist_id]);
+        await pool.query('UPDATE artist SET verified = ? WHERE artist_id = ?', [true, artist_id]);
 
         const [linked] = await pool.query(
             'SELECT user_id FROM artist_acc WHERE artist_id = ?',

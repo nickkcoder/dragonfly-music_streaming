@@ -7,11 +7,11 @@ async function ensureArtistGenreColumn() {
     const dbName = process.env.DB_NAME || 'dragonflydb';
     const [cols] = await pool.query(
         `SELECT COLUMN_NAME FROM information_schema.COLUMNS
-         WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'Artist' AND COLUMN_NAME = 'genre'`,
+         WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'artist' AND COLUMN_NAME = 'genre'`,
         [dbName]
     );
     if (cols.length === 0) {
-        await pool.query('ALTER TABLE Artist ADD COLUMN genre VARCHAR(100) NULL');
+        await pool.query('ALTER TABLE artist ADD COLUMN genre VARCHAR(100) NULL');
     }
     _artistGenreColumnEnsured = true;
 }
@@ -47,7 +47,7 @@ async function createArtist(req, res) {
         }
 
         const [artistResult] = await conn.query(
-            'INSERT INTO Artist (artist_name, bio, genre, img_url, verified) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO artist (artist_name, bio, genre, img_url, verified) VALUES (?, ?, ?, ?, ?)',
             [artist_name, bio || null, genre || null, img_url || null, false]
         );
         const artist_id = artistResult.insertId;
@@ -88,7 +88,7 @@ async function getArtist(req, res) {
     try {
         const artist_id = req.params.id;
         const [rows] = await pool.query(
-            'SELECT * FROM Artist WHERE artist_id = ?',
+            'SELECT * FROM artist WHERE artist_id = ?',
             [artist_id]
         );
 
@@ -114,7 +114,7 @@ async function getArtistCatalog(req, res) {
         }
 
         const [artistRows] = await pool.query(
-            'SELECT * FROM Artist WHERE artist_id = ?',
+            'SELECT * FROM artist WHERE artist_id = ?',
             [artistId]
         );
 
@@ -195,7 +195,7 @@ async function getArtistCatalog(req, res) {
  */
 async function getAllArtists(req, res) {
     try {
-        const [rows] = await pool.query('SELECT * FROM Artist ORDER BY created_at DESC');
+        const [rows] = await pool.query('SELECT * FROM artist ORDER BY created_at DESC');
         return res.json(rows);
     } catch (err) {
         console.error(err);
@@ -211,7 +211,7 @@ async function verifyArtist(req, res) {
         const artist_id = req.params.id;
 
         const [result] = await pool.query(
-            'UPDATE Artist SET verified = ? WHERE artist_id = ?',
+            'UPDATE artist SET verified = ? WHERE artist_id = ?',
             [true, artist_id]
         );
 

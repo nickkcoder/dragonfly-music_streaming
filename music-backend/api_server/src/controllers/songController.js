@@ -39,7 +39,7 @@ async function createSong(req, res) {
             }
 
             const [artistCheck] = await conn.query(
-                'SELECT artist_id FROM Artist WHERE artist_id = ?',
+                'SELECT artist_id FROM artist WHERE artist_id = ?',
                 [req.body.artist_id]
             );
 

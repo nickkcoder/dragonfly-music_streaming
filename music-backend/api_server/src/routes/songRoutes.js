@@ -310,7 +310,7 @@ router.post(
 
             await conn.beginTransaction();
 
-            const [artistRows] = await conn.query('SELECT artist_id FROM Artist WHERE artist_id = ?', [artistId]);
+            const [artistRows] = await conn.query('SELECT artist_id FROM artist WHERE artist_id = ?', [artistId]);
             if (artistRows.length === 0) {
                 await conn.rollback();
                 return res.status(404).json({ message: 'Artist not found' });
