@@ -1,0 +1,66 @@
+<section class="streaming-home">
+  
+  <header class="home-header">
+    <h1>{{ greeting }}</h1>
+  </header>
+
+  <div class="quick-picks-grid">
+    <a *ngFor="let pick of quickPicks" [routerLink]="pick.link" class="quick-pick-card">
+      <img [src]="pick.img" alt="Cover" loading="lazy" />
+      <h3>{{ pick.title }}</h3>
+      <button class="play-btn-circle" (click)="$event.preventDefault()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </button>
+    </a>
+  </div>
+
+  <div class="home-sections-split">
+    
+    <section class="made-for-you-section">
+      <h2 class="section-title">Made For You</h2>
+      <div class="horizontal-scroll">
+        <div class="mix-card" *ngFor="let mix of madeForYou" routerLink="/discover">
+          <div class="mix-image-wrapper">
+            <img [src]="mix.img" alt="Cover" loading="lazy" />
+            <button class="play-btn-circle large" (click)="$event.preventDefault()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </button>
+          </div>
+          <h3>{{ mix.title }}</h3>
+          <p>{{ mix.description }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="trending-section">
+      <h2 class="section-title">Trending Tracks</h2>
+      
+      <div class="song-list">
+        <p *ngIf="trendingLoading" class="status-msg">Fetching trending hits...</p>
+        <p *ngIf="!trendingLoading && !trendingSongs.length" class="status-msg empty">No new tracks trending right now.</p>
+        
+        <div class="song-row song-row-clickable" *ngFor="let song of trendingSongs; let i = index" (click)="playSong(song, $event)">
+          <div class="song-main">
+            <span class="track-number">{{ i + 1 }}</span>
+            <img [src]="song.cover_url || song.coverImage || 'assets/default-cover.png'" class="song-mini-cover" alt="Cover" loading="lazy" />
+            <div class="song-meta">
+              <h3 class="song-title-text">{{ song.title }}</h3>
+              <p>{{ song.artist_name || 'Unknown Artist' }}</p>
+            </div>
+          </div>
+          <div class="song-actions">
+            <!-- Simulated duration or real if available -->
+            <span class="duration">3:24</span>
+          </div>
+        </div>
+      </div>
+      
+    </section>
+
+  </div>
+
+</section>

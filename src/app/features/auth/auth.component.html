@@ -1,0 +1,92 @@
+<div class="auth-overlay" (click)="close()">
+
+  <div class="auth-card" [style.transform]="cardTransform" (click)="$event.stopPropagation()" (mousemove)="handleMouseMove($event)"
+    (mouseleave)="resetTilt()">
+    <div class="dust">
+      <span *ngFor="let p of particles"></span>
+    </div>
+
+
+    <div class="auth-header">
+      <h2 class="glitch-text" [attr.data-text]="isLogin ? 'WELCOME BACK' : 'CREATE ACCOUNT'">
+        {{ isLogin ? 'WELCOME BACK' : 'CREATE ACCOUNT' }}
+      </h2>
+      <span class="close-btn" (click)="close()">&times;</span>
+    </div>
+
+    <form (ngSubmit)="submit()">
+
+      <!-- Error Message Display -->
+      <div *ngIf="errorMessage" class="error-msg" [class.success-msg]="errorMessage.includes('successful')">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Registration Only Fields -->
+      <div *ngIf="!isLogin" class="input-group">
+        <input type="text" placeholder="Username" [(ngModel)]="registerData.username" name="regUsername" required />
+      </div>
+
+      <div *ngIf="!isLogin" class="input-group">
+        <input type="email" placeholder="Email" [(ngModel)]="registerData.email" name="regEmail" required />
+      </div>
+
+      <div *ngIf="!isLogin" class="input-group password-group">
+        <input [type]="showPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="registerData.password"
+          name="regPassword" required />
+        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+          <!-- SVG Icons -->
+          <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+            </path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Login Only Fields -->
+      <div *ngIf="isLogin" class="input-group">
+        <input type="email" placeholder="Email" [(ngModel)]="loginData.email" name="loginEmail" required />
+      </div>
+
+      <div *ngIf="isLogin" class="input-group password-group">
+        <input [type]="showPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="loginData.password"
+          name="loginPassword" required />
+        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+          <!-- SVG Icons -->
+          <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+            </path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+
+      <button class="btn-gold full">
+        {{ isLogin ? 'LOGIN' : 'REGISTER' }}
+      </button>
+
+    </form>
+
+    <div class="switch-mode">
+      <span (click)="toggleMode()">
+        {{ isLogin ? 'Create account' : 'Already have an account?' }}
+      </span>
+    </div>
+
+  </div>
+
+</div>

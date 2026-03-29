@@ -1,1 +1,546 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Space+Grotesk:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rye&family=Cinzel:wght@600;800&family=Syncopate:wght@400;700&family=VT323&display=swap');
+
+/* ==========================================================================
+   GLOBAL THEME ANIMATIONS
+   ========================================================================== */
+
+@keyframes gear-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes gear-spin-reverse {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes gold-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes glitch-shift {
+  0%, 90%, 100% { clip-path: none; transform: translate(0); }
+  91%  { clip-path: inset(10% 0 80% 0); transform: translate(-4px, 0); }
+  93%  { clip-path: inset(60% 0 10% 0); transform: translate(4px, 0); }
+  95%  { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 0); }
+}
+@keyframes scanline-scroll {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100px; }
+}
+@keyframes blob-pulse {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  50%       { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+}
+@keyframes float-up {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes copper-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(184, 115, 51, 0.4); }
+  50%       { box-shadow: 0 0 22px rgba(184, 115, 51, 0.9), 0 0 40px rgba(0, 150, 136, 0.3); }
+}
+@keyframes neon-flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96%            { opacity: 0.4; }
+  97%            { opacity: 1; }
+  98%            { opacity: 0.6; }
+}
+@keyframes parchment-glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(194, 60, 60, 0.4); }
+  50%       { text-shadow: 0 0 22px rgba(194, 60, 60, 0.9), 0 0 40px rgba(212, 163, 115, 0.4); }
+}
+@keyframes glass-shimmer {
+  0%   { background-position: -300% center; }
+  100% { background-position: 300% center; }
+}
+
+/* ==========================================================================
+   THEME ENGINE (VARIABLES & TOKENS)
+   ========================================================================== */
+:root {
+  /* LEGACY ALIASES */
+  --black: #000000;
+  --charcoal: #0a0a0e;
+  --silver: #d4d4da;
+  --lux-gold: #ffd700;
+  --chrome: linear-gradient(90deg, #888, #fff, #888);
+  --accent-pink: #e040fb;
+
+  /* ---------- DEFAULT: Avant-Garde Luxury ---------- */
+  --bg-color: #000000;
+  --bg-gradient: radial-gradient(ellipse at top, #1a1020 0%, #090009 50%, #000000 100%);
+  --surface-color: rgba(15, 10, 25, 0.9);
+  --surface-border: rgba(255, 215, 0, 0.15);
+
+  --text-main: #f0f0f5;
+  --text-muted: rgba(240, 240, 245, 0.6);
+
+  --accent-primary: #ffd700;
+  --accent-secondary: #e040fb;
+  --accent-gradient: linear-gradient(135deg, #ffd700 0%, #ffec6e 50%, #d4a017 100%);
+  --accent-glow: rgba(255, 215, 0, 0.55);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+
+  --font-heading: 'Cormorant Garamond', serif;
+  --font-body: 'Space Grotesk', sans-serif;
+
+  --player-bg: linear-gradient(160deg, #0d0018, #16002a, #000);
+  --player-border: rgba(255, 215, 0, 0.25);
+  --player-shadow: 0 10px 40px rgba(0,0,0,0.95), 0 0 40px rgba(140, 0, 200, 0.2);
+  --player-backdrop: blur(20px);
+}
+
+/* ==========================================================================
+   THEME CLASSES
+   ========================================================================== */
+
+/* 1. AVANT-GARDE LUXURY */
+.theme-luxury {
+  --bg-color: #000000;
+  --bg-gradient: radial-gradient(ellipse at top, #1a1020 0%, #0a0010 50%, #000000 100%);
+  --surface-color: rgba(14, 8, 24, 0.92);
+  --surface-border: rgba(255, 215, 0, 0.18);
+  --text-main: #f0f0f5;
+  --text-muted: rgba(240, 240, 245, 0.58);
+  --accent-primary: #ffd700;
+  --accent-secondary: #e040fb;
+  --accent-gradient: linear-gradient(135deg, #ffd700, #ffec6e, #d4a500);
+  --accent-glow: rgba(255, 215, 0, 0.6);
+  --player-bg: linear-gradient(160deg, #0d0018, #18002e, #000);
+  --player-border: rgba(255, 215, 0, 0.28);
+  --player-shadow: 0 10px 50px rgba(0,0,0,0.98), 0 0 50px rgba(180, 0, 255, 0.18);
+}
+
+/* 2. MEDIEVAL FUTURISM */
+.theme-medieval {
+  --bg-color: #080503;
+  --bg-gradient: radial-gradient(ellipse at center top, #200e0a 0%, #0e0603 60%, #050201 100%);
+  --surface-color: rgba(30, 15, 10, 0.95);
+  --surface-border: rgba(220, 50, 50, 0.45);
+
+  --text-main: #f7e8cc;
+  --text-muted: rgba(247, 232, 204, 0.58);
+
+  --accent-primary: #e53935;
+  --accent-secondary: #ffb74d;
+  --accent-gradient: linear-gradient(135deg, #7f0000, #e53935, #ff6f60);
+  --accent-glow: rgba(229, 57, 53, 0.7);
+
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+
+  --font-heading: 'Rye', serif;
+  --font-body: 'Cinzel', serif;
+
+  --player-bg: linear-gradient(to bottom, #1e0d08, #0d0503);
+  --player-border: #9a1a1a;
+  --player-shadow: 0 10px 40px rgba(0,0,0,0.95), inset 0 0 30px rgba(229, 57, 53, 0.15);
+}
+
+/* 3. 2000s BLOBJECTS */
+.theme-blobjects {
+  --bg-color: #f5f5f5;
+  --bg-gradient: radial-gradient(circle at top right, #b2f5ff 0%, #ffe0f0 40%, #f5f5f5 100%);
+  --surface-color: rgba(255, 255, 255, 0.75);
+  --surface-border: rgba(0, 200, 255, 0.5);
+
+  --text-main: #111111;
+  --text-muted: #555555;
+
+  --accent-primary: #00c8ff;
+  --accent-secondary: #ff1a6b;
+  --accent-gradient: linear-gradient(135deg, #00c8ff, #0088ff);
+  --accent-glow: rgba(0, 200, 255, 0.55);
+
+  --radius-sm: 20px;
+  --radius-md: 28px;
+  --radius-lg: 48px;
+
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+
+  --player-bg: rgba(255, 255, 255, 0.88);
+  --player-border: rgba(0, 200, 255, 0.45);
+  --player-shadow: 0 15px 40px rgba(0, 200, 255, 0.2), inset 0 0 20px rgba(255,255,255,0.95);
+  --player-backdrop: blur(16px);
+}
+
+/* 4. STEAMPUNK */
+.theme-steampunk {
+  --bg-color: #0d0a07;
+  --bg-gradient: radial-gradient(ellipse at top, #2e1f12 0%, #1a1108 60%, #0d0a07 100%);
+  --surface-color: rgba(34, 22, 13, 0.96);
+  --surface-border: #cd7f32;
+
+  --text-main: #f5deb3;
+  --text-muted: rgba(245, 222, 179, 0.6);
+
+  --accent-primary: #cd7f32;
+  --accent-secondary: #00bcd4;
+  --accent-gradient: linear-gradient(135deg, #cd7f32, #e8a850, #a85a1a);
+  --accent-glow: rgba(205, 127, 50, 0.65);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --font-heading: 'Rye', serif;
+  --font-body: 'Cormorant Garamond', serif;
+
+  --player-bg: linear-gradient(180deg, #2e1f12, #180f06);
+  --player-border: #cd7f32;
+  --player-shadow: 0 10px 50px rgba(0,0,0,0.95), inset 0 0 20px rgba(205, 127, 50, 0.25);
+}
+
+/* 5. VECTOFLOURISH */
+.theme-vectoflourish {
+  --bg-color: #000000;
+  --bg-gradient: linear-gradient(180deg, #000000 0%, #020510 100%);
+  --surface-color: rgba(0, 4, 12, 0.92);
+  --surface-border: #00ffcc;
+
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.55);
+
+  --accent-primary: #00ffcc;
+  --accent-secondary: #ff00ff;
+  --accent-gradient: linear-gradient(45deg, #00ffcc, #00aaff, #ff00ff);
+  --accent-glow: rgba(0, 255, 204, 0.8);
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  --font-heading: 'Syncopate', sans-serif;
+  --font-body: 'VT323', monospace;
+
+  --player-bg: rgba(0, 0, 0, 0.95);
+  --player-border: #00ffcc;
+  --player-shadow: 0 0 30px rgba(0, 255, 204, 0.4), inset 0 0 20px rgba(255, 0, 255, 0.25);
+}
+
+/* 6. CLEARTECH */
+.theme-cleartech {
+  --bg-color: #dce8ff;
+  --bg-gradient: linear-gradient(135deg, #c084fc 0%, #60a5fa 50%, #a5f3fc 100%);
+  --surface-color: rgba(255, 255, 255, 0.35);
+  --surface-border: rgba(255, 255, 255, 0.7);
+
+  --text-main: #0f0f1a;
+  --text-muted: rgba(15, 15, 26, 0.58);
+
+  --accent-primary: #7c3aed;
+  --accent-secondary: #0ea5e9;
+  --accent-gradient: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.5));
+  --accent-glow: rgba(124, 58, 237, 0.5);
+
+  --radius-sm: 14px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+
+  --player-bg: rgba(255, 255, 255, 0.45);
+  --player-border: rgba(255, 255, 255, 0.85);
+  --player-shadow: 0 8px 40px rgba(100, 50, 200, 0.2);
+  --player-backdrop: blur(30px);
+}
+
+/* ==========================================================================
+   GLOBAL HTML/BODY
+   ========================================================================== */
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  font-family: var(--font-body);
+  color: var(--text-main);
+  overflow-x: hidden;
+  transition: background 0.6s ease, color 0.4s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* ==========================================================================
+   THEMED BODY TEXTURE OVERLAYS (via ::before on body)
+   ========================================================================== */
+
+/* Steampunk — subtle repeating cog pattern in bg */
+.theme-steampunk body::before,
+body.theme-steampunk::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='12' fill='none' stroke='%23cd7f32' stroke-width='1' opacity='0.07'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='%23cd7f32' stroke-width='0.5' opacity='0.05'/%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* VectoFlourish — scanlines */
+.theme-vectoflourish body::before,
+body.theme-vectoflourish::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 204, 0.03) 2px,
+    rgba(0, 255, 204, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+  animation: scanline-scroll 8s linear infinite;
+}
+
+/* Medieval — vignette */
+.theme-medieval body::before,
+body.theme-medieval::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==========================================================================
+   THEMED SECTION TITLES
+   ========================================================================== */
+
+/* Steampunk section title — copper underline + gear character */
+.theme-steampunk .section-title::after {
+  content: ' ⚙';
+  color: var(--accent-primary);
+  font-size: 0.9em;
+  display: inline-block;
+  animation: gear-spin 6s linear infinite;
+  transform-origin: center;
+}
+.theme-steampunk .section-title {
+  border-bottom: 2px solid var(--accent-primary);
+  padding-bottom: 8px;
+  color: var(--accent-primary);
+  text-shadow: 0 0 16px rgba(205, 127, 50, 0.5);
+}
+
+/* Medieval — blood banner */
+.theme-medieval .section-title {
+  color: var(--accent-primary);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--accent-primary);
+  padding-bottom: 8px;
+  animation: parchment-glow 3s ease-in-out infinite;
+}
+.theme-medieval .section-title::before {
+  content: '⚔ ';
+  font-size: 0.85em;
+}
+.theme-medieval .section-title::after {
+  content: ' ⚔';
+  font-size: 0.85em;
+}
+
+/* VectoFlourish — neon glitch */
+.theme-vectoflourish .section-title {
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  font-size: 1.3rem;
+  animation: neon-flicker 5s ease-in-out infinite, glitch-shift 8s ease-in-out infinite;
+  text-shadow: 0 0 10px var(--accent-primary), 0 0 30px var(--accent-secondary);
+}
+
+/* Blobjects — rounded bubble */
+.theme-blobjects .section-title {
+  color: var(--accent-primary);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+/* ClearTech — frosted chip label */
+.theme-cleartech .section-title {
+  color: var(--accent-primary);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #7c3aed, #0ea5e9, #7c3aed);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glass-shimmer 4s linear infinite;
+}
+
+/* Luxury — gold shimmer */
+.theme-luxury .section-title {
+  background: linear-gradient(90deg, #b8860b, #ffd700, #ffec6e, #ffd700, #b8860b);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-shimmer 4s linear infinite;
+}
+
+/* ==========================================================================
+   THEMED PLAY BUTTON
+   ========================================================================== */
+
+/* Steampunk play button — copper ring + spin on hover */
+.theme-steampunk .play-btn-circle {
+  background: radial-gradient(circle, #cd7f32, #a85a1a);
+  border: 2px solid #e8a850;
+  box-shadow: 0 0 12px rgba(205, 127, 50, 0.6), inset 0 0 6px rgba(0,0,0,0.4);
+  animation: copper-pulse 3s ease-in-out infinite;
+}
+.theme-steampunk .play-btn-circle:hover {
+  animation: gear-spin 2s linear infinite;
+}
+
+/* Medieval play button — heraldic red */
+.theme-medieval .play-btn-circle {
+  background: radial-gradient(circle, #e53935, #7f0000);
+  border: 2px solid #ffb74d;
+  border-radius: 0 !important;
+  box-shadow: 0 0 16px rgba(229, 57, 53, 0.7);
+}
+
+/* VectoFlourish play button — neon ring */
+.theme-vectoflourish .play-btn-circle {
+  background: transparent;
+  border: 2px solid var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow: 0 0 16px var(--accent-glow), inset 0 0 10px rgba(0, 255, 204, 0.1);
+  animation: neon-flicker 4s ease-in-out infinite;
+}
+
+/* Blobjects play button — bubbly morphing blob */
+.theme-blobjects .play-btn-circle {
+  background: linear-gradient(135deg, #00c8ff, #ff1a6b);
+  border: none;
+  animation: blob-pulse 4s ease-in-out infinite;
+  box-shadow: 0 8px 20px rgba(0, 200, 255, 0.4);
+}
+
+/* ClearTech play button — frosted glass */
+.theme-cleartech .play-btn-circle {
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: var(--accent-primary);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+}
+
+/* Luxury play button — gold glow */
+.theme-luxury .play-btn-circle {
+  background: linear-gradient(135deg, #ffd700, #d4a500);
+  border: 2px solid #ffec6e;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  animation: float-up 3s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   THEMED SURFACE CARDS
+   ========================================================================== */
+
+/* Steampunk cards — riveted metal look */
+.theme-steampunk .quick-pick-card,
+.theme-steampunk .mix-card {
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.8), inset 0 0 8px rgba(205, 127, 50, 0.07);
+}
+.theme-steampunk .quick-pick-card:hover,
+.theme-steampunk .mix-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(205, 127, 50, 0.5), inset 0 0 10px rgba(205, 127, 50, 0.1);
+}
+
+/* Medieval cards — stone slab */
+.theme-medieval .quick-pick-card,
+.theme-medieval .mix-card {
+  border: 2px solid var(--surface-border);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.6), inset 0 0 10px rgba(229, 57, 53, 0.05);
+}
+
+/* VectoFlourish cards — neon border */
+.theme-vectoflourish .quick-pick-card,
+.theme-vectoflourish .mix-card {
+  border: 1px solid var(--accent-primary);
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.2), inset 0 0 6px rgba(0, 255, 204, 0.04);
+}
+.theme-vectoflourish .quick-pick-card:hover,
+.theme-vectoflourish .mix-card:hover {
+  box-shadow: 0 0 28px rgba(0, 255, 204, 0.5), 0 0 50px rgba(255, 0, 255, 0.15);
+}
+
+/* Blobjects cards — bubbly */
+.theme-blobjects .quick-pick-card,
+.theme-blobjects .mix-card {
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 200, 255, 0.2), 0 2px 8px rgba(255, 26, 107, 0.1);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ClearTech cards — frosted */
+.theme-cleartech .quick-pick-card,
+.theme-cleartech .mix-card {
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 8px 32px rgba(100, 50, 200, 0.12);
+}
+
+/* ==========================================================================
+   GLOBAL UTILITY CLASSES
+   ========================================================================== */
+
+.btn-gold {
+  padding: 14px 40px;
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--bg-color);
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-gold:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px var(--accent-glow);
+}
+
+.btn-ghost {
+  padding: 14px 40px;
+  background: transparent;
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-full);
+  color: var(--accent-primary);
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.btn-ghost:hover {
+  background: var(--accent-primary);
+  color: var(--bg-color);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+

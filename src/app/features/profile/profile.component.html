@@ -1,0 +1,104 @@
+<section class="profile-page">
+  <div class="royal-grid"></div>
+  <div class="chrome-glow"></div>
+
+  <header class="profile-header">
+    <div class="avatar-frame">
+      <img [src]="avatarPreview || user.avatarUrl || 'assets/default-avatar.png'" alt="user avatar">
+    </div>
+
+    <div class="profile-info">
+      <h1 class="username">{{ user.username || 'Your Profile' }}</h1>
+      <p class="bio">{{ user.bio || 'No bio yet.' }}</p>
+
+      <div class="profile-actions">
+        <button class="lux-btn" (click)="openEdit()">Edit Profile</button>
+        <button class="lux-btn logout" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="profile-grid">
+    <section class="profile-section">
+      <h2 class="section-title">Liked Songs</h2>
+
+      <ul class="track-list">
+        <li class="track track-clickable" *ngFor="let song of likedSongs" (click)="playLikedSong(song)">
+          <span class="track-main">
+            <img class="track-mini-cover" [src]="song.coverImage" [alt]="song.title + ' cover'">
+            <span class="track-title">{{ song.title }}</span>
+          </span>
+          <span class="track-artist">{{ song.artist }}</span>
+          <span class="track-time"><button type="button" (click)="playNextLikedSong(song, $event)">Next</button><button type="button" (click)="queueLikedSong(song, $event)">Queue</button></span>
+        </li>
+        <li class="track" *ngIf="!likedSongs.length">
+          <span class="track-main">
+            <img class="track-mini-cover" src="assets/favicon.ico" alt="No likes">
+            <span class="track-title">No liked songs yet</span>
+          </span>
+          <span class="track-artist">Tap the heart in player</span>
+          <span class="track-time">-</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="profile-section">
+      <h2 class="section-title">Upcoming Library Features</h2>
+      <p class="bio">These sections stay hidden until the backend exposes real profile collections.</p>
+      <ul class="track-list">
+        <li class="track" *ngFor="let section of hiddenSections">
+          <span class="track-main">
+            <span class="track-title">{{ section }}</span>
+          </span>
+          <span class="track-artist">Pending backend integration</span>
+          <span class="track-time">Soon</span>
+        </li>
+      </ul>
+    </section>
+  </div>
+</section>
+
+<div class="edit-overlay" *ngIf="editOpen" (click)="closeEdit()"></div>
+
+<div class="edit-panel" *ngIf="editOpen">
+  <div class="panel-header">
+    <h2>Edit Profile</h2>
+    <div class="panel-actions">
+      <a class="settings-link" routerLink="/settings" (click)="closeEdit()" title="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.72 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.05.31-.07.63-.07.94s.02.63.07.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.58-.23 1.13-.54 1.63-.94l2.39.96c.24.1.51 0 .64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"></path>
+        </svg>
+      </a>
+      <button class="close-btn" (click)="closeEdit()">x</button>
+    </div>
+  </div>
+
+  <form (ngSubmit)="saveProfile()" class="edit-form">
+    <div class="form-group">
+      <label>Avatar</label>
+
+      <div class="avatar-preview">
+        <img [src]="avatarPreview || user.avatarUrl || 'assets/default-avatar.png'" alt="avatar preview">
+      </div>
+
+      <input type="file" (change)="onAvatarChange($event)">
+    </div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" [(ngModel)]="user.username" name="username">
+    </div>
+
+    <div class="form-group">
+      <label>Bio</label>
+      <textarea [(ngModel)]="user.bio" name="bio"></textarea>
+    </div>
+
+
+    <button type="submit" class="save-btn" [disabled]="panelBusy">Save Changes</button>
+  </form>
+
+  <p class="panel-status ok" *ngIf="panelMessage">{{ panelMessage }}</p>
+  <p class="panel-status error" *ngIf="panelError">{{ panelError }}</p>
+</div>
+

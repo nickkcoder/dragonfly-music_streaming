@@ -1,0 +1,204 @@
+﻿<div
+  class="playerbar"
+  [class.playing]="isPlaying"
+  [class.expanded]="isExpanded"
+  (click)="!isExpanded && toggleExpanded()"
+>
+  <button
+    *ngIf="isExpanded"
+    class="collapse-toggle"
+    (click)="toggleExpanded(); $event.stopPropagation()"
+    type="button"
+  >
+    X
+  </button>
+
+  <div class="royal-glow"></div>
+  <div class="gold-frame"></div>
+  <div class="energy-trim"></div>
+
+  <div class="compact-layout" *ngIf="!isExpanded">
+    <div class="track-info">
+      <div class="art-stack" (click)="togglePlay(); $event.stopPropagation()">
+        <img
+          class="track-cover"
+          [src]="currentTrack.coverImage || 'assets/favicon.ico'"
+          [alt]="currentTrack.title"
+        >
+      </div>
+
+      <div class="meta">
+        <h4 class="track-title">{{ currentTrack.title }}</h4>
+        <p class="track-artist">{{ currentTrack.artist }}</p>
+      </div>
+
+      <button
+        class="like-btn"
+        type="button"
+        [class.active]="isCurrentTrackLiked"
+        [disabled]="!currentTrack.songId || likeBusy"
+        (click)="toggleLikeCurrentTrack($event)"
+        title="Like song"
+      >
+        ♥
+      </button>
+    </div>
+
+    <div class="center-section">
+      <div class="controls" (click)="$event.stopPropagation()">
+        <button class="control-btn prev" (click)="prev(); $event.stopPropagation()" type="button">
+          <
+        </button>
+
+        <div class="play-wrapper">
+          <div class="play-aura"></div>
+          <button
+            class="play-btn"
+            (click)="togglePlay(); $event.stopPropagation()"
+            (mousemove)="magnetic($event)"
+            (mouseleave)="resetMagnetic($event)"
+            type="button"
+          >
+            {{ isPlaying ? '||' : '>' }}
+          </button>
+        </div>
+
+        <button class="control-btn next" (click)="next(); $event.stopPropagation()" type="button">
+          >
+        </button>
+      </div>
+
+      <div class="progress-section">
+        <span class="time">{{ currentTime }}</span>
+
+        <div class="progress-wrapper" (click)="seek($event)">
+          <div class="progress-bar">
+            <div class="progress" [style.width.%]="progress">
+              <div class="progress-thumb" [style.left.%]="progress"></div>
+            </div>
+          </div>
+        </div>
+
+        <span class="time">{{ duration }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="expanded-layout" [class.sidebar-collapsed]="!isSidebarOpen" *ngIf="isExpanded" (click)="$event.stopPropagation()">
+    <button
+      class="sidebar-toggle-open"
+      *ngIf="!isSidebarOpen"
+      (click)="isSidebarOpen = true"
+      type="button"
+      title="Open Queue Sidebar"
+    >
+      ☰
+    </button>
+
+    <aside class="expanded-sidebar" *ngIf="isSidebarOpen">
+      <div class="sidebar-head">
+        <span>Library</span>
+        <button class="sidebar-close" type="button" (click)="isSidebarOpen = false" title="Close Sidebar">X</button>
+      </div>
+
+      <div class="expanded-tabs">
+        <button
+          class="expanded-tab"
+          [class.active]="activeExpandedTab === 'recent'"
+          (click)="selectExpandedTab('recent')"
+          type="button"
+        >
+          Recently Played
+        </button>
+
+        <button
+          class="expanded-tab"
+          [class.active]="activeExpandedTab === 'queue'"
+          (click)="selectExpandedTab('queue')"
+          type="button"
+        >
+          Queue
+        </button>
+      </div>
+
+      <div class="expanded-sidebar-content" *ngIf="activeExpandedTab; else tabPrompt">
+        <ul *ngIf="activeExpandedTab === 'recent'">
+          <li *ngFor="let item of recentlyPlayed" (click)="playRecentItem(item, $event)">
+            <img class="mini-cover" [src]="item.coverImage || currentTrack.coverImage || 'assets/favicon.ico'" [alt]="item.title">
+            <span>{{ item.title }} - {{ item.artist }}</span>
+          </li>
+          <li *ngIf="!recentlyPlayed.length">No recent tracks yet.</li>
+        </ul>
+
+        <ul *ngIf="activeExpandedTab === 'queue'">
+          <li *ngFor="let item of queue; let i = index" class="queue-row">
+            <img class="mini-cover" [src]="item.coverImage || currentTrack.coverImage || 'assets/favicon.ico'" [alt]="item.title">
+            <span>{{ item.title }} - {{ item.artist }}</span>
+            <div class="queue-actions">
+              <button type="button" (click)="playQueuedItem(i, $event)">Play</button>
+              <button type="button" (click)="moveQueueItemUp(i, $event)" [disabled]="i === 0">↑</button>
+              <button type="button" (click)="moveQueueItemDown(i, $event)" [disabled]="i === queue.length - 1">↓</button>
+              <button type="button" (click)="removeQueueItem(i, $event)">×</button>
+            </div>
+          </li>
+          <li *ngIf="!queue.length">Queue is empty.</li>
+        </ul>
+      </div>
+
+      <ng-template #tabPrompt>
+        <p class="tab-placeholder">Choose a tab to view list.</p>
+      </ng-template>
+    </aside>
+
+    <section class="expanded-main">
+      <img
+        class="expanded-cover"
+        [src]="currentTrack.coverImage || 'assets/favicon.ico'"
+        [alt]="currentTrack.title"
+      >
+
+      <div class="expanded-meta">
+        <h3>{{ currentTrack.title }}</h3>
+        <p>{{ currentTrack.artist }}</p>
+        <button
+          class="like-btn expanded-like-btn"
+          type="button"
+          [class.active]="isCurrentTrackLiked"
+          [disabled]="!currentTrack.songId || likeBusy"
+          (click)="toggleLikeCurrentTrack($event)"
+          title="Like song"
+        >
+          ♥
+        </button>
+      </div>
+
+      <div class="controls">
+        <button class="control-btn prev" (click)="prev()" type="button"><</button>
+        <button
+          class="play-btn"
+          (click)="togglePlay()"
+          (mousemove)="magnetic($event)"
+          (mouseleave)="resetMagnetic($event)"
+          type="button"
+        >
+          {{ isPlaying ? '||' : '>' }}
+        </button>
+        <button class="control-btn next" (click)="next()" type="button">></button>
+      </div>
+
+      <div class="progress-section expanded-progress">
+        <span class="time">{{ currentTime }}</span>
+
+        <div class="progress-wrapper" (click)="seek($event)">
+          <div class="progress-bar">
+            <div class="progress" [style.width.%]="progress">
+              <div class="progress-thumb" [style.left.%]="progress"></div>
+            </div>
+          </div>
+        </div>
+
+        <span class="time">{{ duration }}</span>
+      </div>
+    </section>
+  </div>
+</div>

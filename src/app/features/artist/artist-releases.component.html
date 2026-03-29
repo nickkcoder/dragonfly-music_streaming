@@ -1,0 +1,123 @@
+<section class="artist-releases">
+  <div class="page-header">
+    <div>
+      <h1>Your Releases</h1>
+      <p>Manage singles and albums tied to your artist profile.</p>
+    </div>
+    <button type="button" class="lux-btn secondary" (click)="goToSettings()">Settings</button>
+  </div>
+
+  <div class="status" *ngIf="loading">Loading your catalog...</div>
+  <div class="status error" *ngIf="!loading && error">
+    {{ error }} <button type="button" class="lux-btn secondary" (click)="goToSettings()">Get Artist Access</button>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <section class="release-builder">
+      <h2>Create Release</h2>
+      <p class="muted">Only your artist catalog is visible here.</p>
+
+      <div class="form-group">
+        <label>Release Type</label>
+        <select [(ngModel)]="releaseMode" name="release_mode" [disabled]="submitBusy">
+          <option value="single">Single</option>
+          <option value="album">Album</option>
+        </select>
+      </div>
+
+      <div *ngIf="releaseMode === 'single'">
+        <div class="form-group">
+          <label>Song Title</label>
+          <input type="text" [(ngModel)]="singleReleaseData.title" name="single_title" [disabled]="submitBusy">
+        </div>
+        <div class="form-group">
+          <label>Song Genre</label>
+          <input type="text" [(ngModel)]="singleReleaseData.genre" name="single_genre" [disabled]="submitBusy">
+        </div>
+        <div class="form-group">
+          <label>Audio File</label>
+          <input type="file" accept="audio/*" (change)="onSongFileChange($event)" [disabled]="submitBusy">
+        </div>
+      </div>
+
+      <div *ngIf="releaseMode === 'album'" class="album-builder">
+        <div class="form-group">
+          <label>Album Title</label>
+          <input type="text" [(ngModel)]="albumReleaseData.title" name="album_title" [disabled]="submitBusy">
+        </div>
+        <div class="form-group">
+          <label>Release Date</label>
+          <input type="date" [(ngModel)]="albumReleaseData.release_date" name="album_release_date" [disabled]="submitBusy">
+        </div>
+        <div class="form-group">
+          <label>Album Cover (Optional)</label>
+          <input type="file" accept="image/*" (change)="onAlbumCoverFileChange($event)" [disabled]="submitBusy">
+        </div>
+
+        <div class="album-track-list">
+          <div class="album-track-row" *ngFor="let track of albumReleaseData.tracks; let i = index">
+            <input type="text" placeholder="Track title" [(ngModel)]="track.title" [name]="'album_track_title_' + i" [disabled]="submitBusy">
+            <input type="text" placeholder="Genre (optional)" [(ngModel)]="track.genre" [name]="'album_track_genre_' + i" [disabled]="submitBusy">
+            <input type="url" placeholder="Audio URL (optional if file selected)" [(ngModel)]="track.audio_url" [name]="'album_track_url_' + i" [disabled]="submitBusy">
+            <input type="file" accept="audio/*" (change)="onAlbumTrackAudioFileChange(i, $event)" [disabled]="submitBusy">
+            <select [(ngModel)]="track.order_number" [name]="'album_track_order_' + i" [disabled]="submitBusy">
+              <option *ngFor="let order of getAlbumTrackOrderOptions()" [ngValue]="order">{{ order }}</option>
+            </select>
+            <button type="button" class="lux-btn secondary" (click)="removeAlbumTrack(i)" [disabled]="submitBusy || albumReleaseData.tracks.length <= 1">
+              Remove
+            </button>
+          </div>
+          <button type="button" class="lux-btn secondary" (click)="addAlbumTrack()" [disabled]="submitBusy">
+            Add Track
+          </button>
+        </div>
+      </div>
+
+      <button type="button" class="save-btn" (click)="submitRelease()" [disabled]="submitBusy">
+        Publish Release
+      </button>
+      <p class="panel-status ok" *ngIf="submitMessage">{{ submitMessage }}</p>
+      <p class="panel-status error" *ngIf="submitError">{{ submitError }}</p>
+    </section>
+
+    <section class="catalog">
+      <h2>Singles</h2>
+      <div class="list-grid" *ngIf="catalog.singles?.length; else noSingles">
+        <article class="card" *ngFor="let single of catalog.singles">
+          <h3>{{ single.title }}</h3>
+          <button type="button" class="lux-btn secondary" (click)="deleteSingle(single.song_id)">
+            Delete
+          </button>
+        </article>
+      </div>
+      <ng-template #noSingles>
+        <p class="muted">No singles yet.</p>
+      </ng-template>
+    </section>
+
+    <section class="catalog">
+      <h2>Albums</h2>
+      <div class="album-grid" *ngIf="catalog.albums?.length; else noAlbums">
+        <article class="card album" *ngFor="let album of catalog.albums">
+          <div class="album-header">
+            <div>
+              <h3>{{ album.title }}</h3>
+              <p class="muted" *ngIf="album.release_date">{{ album.release_date | date }}</p>
+            </div>
+          </div>
+          <ul class="track-list">
+            <li class="track-row" *ngFor="let track of album.tracks">
+              <span>{{ track.track_number || '-' }}. {{ track.title }}</span>
+              <button type="button" class="lux-btn secondary" (click)="deleteAlbumTrack(track.song_id)">
+                Delete Track
+              </button>
+            </li>
+          </ul>
+        </article>
+      </div>
+      <ng-template #noAlbums>
+        <p class="muted">No albums yet.</p>
+      </ng-template>
+    </section>
+  </div>
+</section>

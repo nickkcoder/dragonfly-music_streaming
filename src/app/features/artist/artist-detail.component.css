@@ -1,0 +1,246 @@
+.artist-detail-page {
+  min-height: 100vh;
+  background: var(--bg-color);
+  color: var(--text-main);
+  padding-bottom: 120px;
+}
+
+.id-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--accent-primary);
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.artist-banner {
+  height: min(52vh, 480px);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--player-backdrop);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px 8vw 30px;
+}
+
+.banner-overlay h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.5vw, 3.4rem);
+}
+
+.artist-songs {
+  margin: 24px 8vw 0;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.panel-head h2 {
+  margin: 0;
+  color: var(--accent-primary);
+}
+
+.panel-head span {
+  opacity: 0.75;
+  color: var(--text-muted);
+}
+
+.song-list {
+  display: grid;
+  gap: 8px;
+}
+
+.album-list {
+  display: grid;
+  gap: 14px;
+}
+
+.album-card {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-color);
+  padding: 10px;
+}
+
+.album-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.album-header img {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--surface-border);
+}
+
+.album-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.album-header p {
+  margin: 4px 0 0;
+  opacity: 0.72;
+  font-size: 0.8rem;
+}
+
+.song-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-color);
+}
+
+.song-row-clickable {
+  cursor: pointer;
+}
+
+.song-row-clickable:hover {
+  border-color: var(--accent-primary);
+  background: var(--surface-color);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.song-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.song-mini-cover {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--surface-border);
+  flex: 0 0 28px;
+}
+
+.song-row h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.song-row p {
+  margin: 4px 0 0;
+  opacity: 0.72;
+  font-size: 0.86rem;
+}
+
+.song-row a {
+  color: #9dc6ff;
+  text-decoration: none;
+}
+
+.song-row a:hover {
+  text-decoration: underline;
+}
+
+.song-title-text {
+  color: var(--text-main);
+}
+
+.song-row-clickable:hover .song-title-text {
+  color: var(--accent-primary);
+}
+
+.song-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.song-actions button {
+  border: 1px solid var(--accent-primary);
+  background: transparent;
+  color: var(--accent-primary);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+
+.empty {
+  opacity: 0.7;
+  margin: 6px 0 0;
+}
+
+.admin-image-tools {
+  margin: 16px 8vw 0;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-color);
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.admin-image-tools h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--accent-primary);
+}
+
+.admin-image-tools input {
+  background: var(--surface-color);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+}
+
+.save-btn {
+  border: 1px solid var(--accent-primary);
+  background: transparent;
+  color: var(--accent-primary);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status {
+  margin: 0;
+}
+
+.status.ok {
+  color: #6ce8a1;
+}
+
+.status.error {
+  color: #ff7474;
+}
+
+.status.loading {
+  opacity: 0.75;
+}

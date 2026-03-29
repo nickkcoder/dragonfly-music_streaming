@@ -1,0 +1,93 @@
+<nav class="navbar" [class.scrolled]="isScrolled">
+    <div class="nav-inner">
+
+        <!-- Left Section: Logo + Home -->
+        <div class="nav-left" *ngIf="!searchActive">
+            <div class="logo magnetic" routerLink="/home" (mousemove)="magnet($event)"
+                (mouseleave)="resetMagnet($event)">
+                <span class="brand-main shimmer">DRAGONFLY</span>
+                <span class="brand-accent">ARCHIVE</span>
+            </div>
+        </div>
+
+        <!-- Center Section: Search Bar -->
+        <div class="nav-center" *ngIf="!isDiscoverRoute" [class.search-expanded]="searchActive">
+            <div class="search-container">
+                <!-- Mobile Search Icon (visible only on mobile) -->
+                <button class="icon-btn search-toggle-btn" (click)="toggleSearch()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+
+                <!-- Search Input Group -->
+                <div class="search-input-wrapper">
+                    <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
+                        class="search-input">
+                    <button class="icon-btn close-search-btn" (click)="toggleSearch()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section: Login + Hamburger -->
+        <div class="nav-right" *ngIf="!searchActive">
+            <span
+                class="role-badge"
+                [ngClass]="getRoleBadgeClass(getRoleBadgeLabel(role$ | async, isAdmin$ | async))"
+                *ngIf="shouldShowRoleBadge(role$ | async, isAdmin$ | async)">
+                <span class="role-badge-icon"></span>
+                {{ getRoleBadgeLabel(role$ | async, isAdmin$ | async) }}
+            </span>
+            <!-- Hamburger icon (mobile) -->
+            <div class="hamburger" [class.active]="mobileOpen" (click)="toggleMobile()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Full-screen mobile menu overlay -->
+        <div class="mobile-menu" [class.open]="mobileOpen" (scroll)="onMenuScroll($event)">
+            <ul class="nav-links-mobile" [style.transform]="'rotateX(' + menuRotation + 'deg)'">
+                <li>
+                    <span
+                        class="role-badge-mobile"
+                        [ngClass]="getRoleBadgeClass(getRoleBadgeLabel(role$ | async, isAdmin$ | async))"
+                        *ngIf="shouldShowRoleBadge(role$ | async, isAdmin$ | async)">
+                        <span class="role-badge-icon"></span>
+                        {{ getRoleBadgeLabel(role$ | async, isAdmin$ | async) }}
+                    </span>
+                </li>
+                <li><a routerLink="/home" routerLinkActive="active" (click)="toggleMobile()">Home</a></li>
+                <li><a routerLink="/discover" routerLinkActive="active" (click)="toggleMobile()">Discover</a></li>
+
+                <li *ngIf="isAdmin$ | async">
+                    <button routerLink="/admin" class="login-btn mobile-btn"
+                        (click)="toggleMobile()">Admin</button>
+                </li>
+
+                <li *ngIf="isArtistOrAdmin$ | async">
+                    <button routerLink="/artist/releases" class="login-btn mobile-btn"
+                        (click)="toggleMobile()">My Releases</button>
+                </li>
+
+                <li *ngIf="!(isLoggedIn$ | async)"><button routerLink="/auth" class="login-btn mobile-btn"
+                        (click)="toggleMobile()">Login / Register</button></li>
+                <li *ngIf="isLoggedIn$ | async"><button routerLink="/settings" class="login-btn mobile-btn"
+                        (click)="toggleMobile()">Settings</button></li>
+                <li *ngIf="isLoggedIn$ | async"><button routerLink="/profile" class="login-btn mobile-btn"
+                        (click)="toggleMobile()">Profile</button></li>
+            </ul>
+        </div>
+
+    </div>
+
+</nav>

@@ -1,0 +1,29 @@
+<section class="artists-hero">
+  <h1>THE ARCHIVE</h1>
+  <p>Curated visionaries shaping the ritual.</p>
+</section>
+
+<section class="artists-grid">
+
+  <div
+    class="artist-card"
+    *ngFor="let artist of filteredArtists"
+  >
+    <div class="image-wrapper">
+      <img [src]="artist.image" [alt]="artist.name" />
+
+      <div class="overlay">
+        <h3>{{ artist.name }}</h3>
+        <p>{{ artist.genre }}</p>
+        <button class="btn-gold small" [routerLink]="['/artist', artist.id]">
+          VIEW PROFILE
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="no-results" *ngIf="filteredArtists.length === 0">
+  No artists found.
+</div>

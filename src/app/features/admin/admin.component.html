@@ -1,0 +1,277 @@
+<section class="admin-page">
+  <header class="admin-header">
+    <h1>Admin Console</h1>
+    <button class="btn" (click)="loadAll()" [disabled]="loading">Reload</button>
+  </header>
+
+  <section class="admin-section admin-search">
+    <h2>Search</h2>
+    <input
+      type="text"
+      placeholder="Search users, artists, and songs..."
+      [(ngModel)]="adminSearch">
+  </section>
+
+  <p class="status loading" *ngIf="loading">Loading admin data...</p>
+  <p class="status error" *ngIf="error">{{ error }}</p>
+  <p class="status ok" *ngIf="success">{{ success }}</p>
+
+  <section class="admin-section">
+    <h2>Recently Deleted (Undo Within 10 Minutes)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Entity ID</th>
+            <th>Time Left</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of activeDeletions">
+            <td>{{ getDeletionTypeLabel(item) }}</td>
+            <td>{{ item.entity_id }}</td>
+            <td>{{ formatRemaining(getDeletionRemainingSeconds(item)) }}</td>
+            <td>
+              <button
+                class="btn"
+                [disabled]="getDeletionRemainingSeconds(item) <= 0 || undoingDeletionIds.has(getDeletionId(item) || '')"
+                (click)="undoDeletion(item)">
+                Undo
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!activeDeletions.length">
+            <td colspan="4">No deletions available for undo.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <h2>Create Artist</h2>
+    <div class="form-grid">
+      <input type="text" placeholder="Artist name" [(ngModel)]="artistForm.artist_name" [disabled]="creatingArtist">
+      <input type="text" placeholder="Genre" [(ngModel)]="artistForm.genre" [disabled]="creatingArtist">
+      <input type="text" placeholder="Bio" [(ngModel)]="artistForm.bio" [disabled]="creatingArtist">
+      <button class="btn" (click)="createArtist()" [disabled]="creatingArtist">
+        {{ creatingArtist ? 'Creating...' : 'Add Artist' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <h2>Admins</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredAdminUsers">
+            <td>{{ getUserId(user) }}</td>
+            <td>{{ user.username || user.user_name || user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ getUserRole(user) }}</td>
+          </tr>
+          <tr *ngIf="!filteredAdminUsers.length">
+            <td colspan="4">No admins found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <h2>Users</h2>
+    <p class="status loading">Admins can promote other users to admin using the Promote button.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>{{ getUserId(user) }}</td>
+            <td>{{ user.username || user.user_name || user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <select
+                [value]="getUserRole(user)"
+                [disabled]="workingUserIds.has(getUserId(user) || '')"
+                (change)="onRoleChange(user, $event)">
+                <option *ngIf="!isKnownRole(getUserRole(user))" [value]="getUserRole(user)">
+                  {{ getUserRole(user) }}
+                </option>
+                <option value="user">user</option>
+                <option value="artist">artist</option>
+                <option value="admin">admin</option>
+              </select>
+            </td>
+            <td class="actions">
+              <button
+                class="btn"
+                [disabled]="getUserRole(user) === 'admin' || workingUserIds.has(getUserId(user) || '')"
+                (click)="promoteToAdmin(user)">
+                Promote
+              </button>
+              <button
+                class="btn danger"
+                [disabled]="workingUserIds.has(getUserId(user) || '')"
+                (click)="deleteUser(user)">
+                Delete
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!filteredUsers.length">
+            <td colspan="5">No users found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <h2>Artists</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Genre</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let artist of filteredArtists">
+            <td>{{ getArtistId(artist) }}</td>
+            <td>{{ artist.artist_name || artist.name }}</td>
+            <td>{{ artist.genre || '-' }}</td>
+            <td>
+              <button class="btn danger" (click)="removeArtist(artist)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="!filteredArtists.length">
+            <td colspan="4">No artists found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <h2>Release Creator</h2>
+    <div class="form-grid">
+      <select [(ngModel)]="releaseMode">
+        <option value="single">Single</option>
+        <option value="album">Album</option>
+      </select>
+    </div>
+
+    <div class="release-mode-box" *ngIf="releaseMode === 'single'">
+      <div class="form-grid song-form">
+        <input type="text" placeholder="Song title" [(ngModel)]="songForm.title" [disabled]="creatingSong">
+        <input type="text" placeholder="Genre" [(ngModel)]="songForm.genre" [disabled]="creatingSong">
+        <select [(ngModel)]="songForm.artist_id" [disabled]="creatingSong">
+          <option value="all">All artists</option>
+          <option *ngFor="let artist of artists" [ngValue]="getArtistId(artist)">
+            {{ artist.artist_name || artist.name }}
+          </option>
+        </select>
+        <input type="url" placeholder="Audio URL (optional if file is selected)" [(ngModel)]="songForm.audio_url" [disabled]="creatingSong">
+        <input type="file" accept="audio/*" (change)="onSongFileChange($event)" [disabled]="creatingSong">
+        <input type="file" accept="image/*" (change)="onCoverImageFileChange($event)" [disabled]="creatingSong" title="Choose cover image">
+        <button class="btn" (click)="createSong()" [disabled]="creatingSong">
+          {{ creatingSong ? 'Saving...' : 'Create Single' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="release-mode-box" *ngIf="releaseMode === 'album'">
+      <div class="form-grid">
+        <input type="text" placeholder="Album title" [(ngModel)]="albumForm.title" [disabled]="creatingAlbum">
+        <select [(ngModel)]="albumForm.artist_id" (change)="onAlbumArtistChange()" [disabled]="creatingAlbum">
+          <option [ngValue]="''">Select artist</option>
+          <option *ngFor="let artist of artists" [ngValue]="getArtistId(artist)">
+            {{ artist.artist_name || artist.name }}
+          </option>
+        </select>
+        <input type="date" [(ngModel)]="albumForm.release_date" [disabled]="creatingAlbum">
+        <input type="file" accept="image/*" (change)="onAlbumCoverFileChange($event)" [disabled]="creatingAlbum" title="Choose album cover">
+      </div>
+
+      <div class="track-builder">
+        <h3>Queued Album Tracks (Upload Together)</h3>
+        <div class="track-row" *ngFor="let track of albumForm.tracks; let i = index">
+          <input type="text" placeholder="Track title" [(ngModel)]="track.title" [disabled]="creatingAlbum">
+          <input type="text" placeholder="Genre (optional)" [(ngModel)]="track.genre" [disabled]="creatingAlbum">
+          <input type="url" placeholder="Audio URL (optional if file selected)" [(ngModel)]="track.audio_url" [disabled]="creatingAlbum">
+          <input type="file" accept="audio/*" (change)="onAlbumTrackAudioFileChange(i, $event)" [disabled]="creatingAlbum">
+          <select [(ngModel)]="track.order_number" [disabled]="creatingAlbum">
+            <option *ngFor="let order of getAlbumTrackOrderOptions()" [ngValue]="order">{{ order }}</option>
+          </select>
+          <button class="btn danger" type="button" (click)="removeAlbumTrackRow(i)" [disabled]="creatingAlbum || albumForm.tracks.length <= 1">
+            Remove
+          </button>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button" (click)="addAlbumTrackRow()" [disabled]="creatingAlbum">Add Track</button>
+          <button class="btn" type="button" (click)="createAlbum()" [disabled]="creatingAlbum">
+            {{ creatingAlbum ? 'Saving...' : 'Create Album' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <h2>Songs</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let song of filteredSongs">
+            <td>{{ getSongId(song) }}</td>
+            <td>
+              <div class="song-title-cell">
+                <img
+                  class="song-mini-cover"
+                  [src]="getSongCoverUrl(song)"
+                  [alt]="song.title || song.song_name">
+                <span>{{ song.title || song.song_name }}</span>
+              </div>
+            </td>
+            <td>{{ song.artist_name || song.artist || '-' }}</td>
+            <td>
+              <button class="btn danger" (click)="removeSong(song)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="!filteredSongs.length">
+            <td colspan="4">No songs found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
