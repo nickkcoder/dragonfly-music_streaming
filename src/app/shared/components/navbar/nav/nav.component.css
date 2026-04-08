@@ -207,6 +207,7 @@
 .logo {
     display: flex;
     flex-direction: column;
+    text-decoration: none;
     cursor: pointer;
     transition: transform 0.2s ease;
 }
@@ -440,6 +441,10 @@
     width: 30px;
     height: 24px;
     z-index: 1100;
+    /* Reset button defaults */
+    background: none;
+    border: none;
+    padding: 0;
 }
 
 .hamburger span {

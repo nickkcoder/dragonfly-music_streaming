@@ -1,27 +1,36 @@
-<section class="settings-page">
+<section class="settings-page" aria-labelledby="settings-heading">
   <div class="settings-hero">
-    <h1>Settings</h1>
+    <h1 id="settings-heading">Settings</h1>
     <p>Manage your account, preferences, and creator tools without the clutter.</p>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('account')" (keydown.enter)="togglePanel('account')" (keydown.space)="togglePanel('account')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'account'"
+      aria-controls="panel-account"
+      (click)="togglePanel('account')"
+      (keydown.enter)="togglePanel('account')"
+      (keydown.space)="$event.preventDefault(); togglePanel('account')"
+    >
       <div>
         <h2>Account Basics</h2>
         <p>Update your login details or close your account.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'account'">
+    <div id="panel-account" class="settings-panel" *ngIf="activePanel === 'account'">
       <div class="panel-block">
         <h3>Change Email</h3>
         <div class="form-group">
-          <label>New Email</label>
-          <input type="email" [(ngModel)]="accountEmail" name="account_email" [disabled]="accountBusy">
+          <label for="account-email">New Email</label>
+          <input id="account-email" type="email" [(ngModel)]="accountEmail" name="account_email" [disabled]="accountBusy" autocomplete="email">
         </div>
         <div class="form-group">
-          <label>Current Password</label>
-          <input type="password" [(ngModel)]="accountPassword" name="account_password" [disabled]="accountBusy">
+          <label for="account-current-password">Current Password</label>
+          <input id="account-current-password" type="password" [(ngModel)]="accountPassword" name="account_password" [disabled]="accountBusy" autocomplete="current-password">
         </div>
         <button type="button" class="save-btn" (click)="updateEmail()" [disabled]="accountBusy">
           Update Email
@@ -31,16 +40,16 @@
       <div class="panel-block">
         <h3>Change Password</h3>
         <div class="form-group">
-          <label>Current Password</label>
-          <input type="password" [(ngModel)]="currentPassword" name="current_password" [disabled]="accountBusy">
+          <label for="current-password">Current Password</label>
+          <input id="current-password" type="password" [(ngModel)]="currentPassword" name="current_password" [disabled]="accountBusy" autocomplete="current-password">
         </div>
         <div class="form-group">
-          <label>New Password</label>
-          <input type="password" [(ngModel)]="newPassword" name="new_password" [disabled]="accountBusy">
+          <label for="new-password">New Password</label>
+          <input id="new-password" type="password" [(ngModel)]="newPassword" name="new_password" [disabled]="accountBusy" autocomplete="new-password">
         </div>
         <div class="form-group">
-          <label>Confirm New Password</label>
-          <input type="password" [(ngModel)]="confirmPassword" name="confirm_password" [disabled]="accountBusy">
+          <label for="confirm-password">Confirm New Password</label>
+          <input id="confirm-password" type="password" [(ngModel)]="confirmPassword" name="confirm_password" [disabled]="accountBusy" autocomplete="new-password">
         </div>
         <button type="button" class="save-btn" (click)="updatePassword()" [disabled]="accountBusy">
           Update Password
@@ -51,79 +60,107 @@
         <h3>Delete Account</h3>
         <p>This permanently removes your profile. Type DELETE to confirm.</p>
         <div class="form-group">
-          <label>Type DELETE</label>
-          <input type="text" [(ngModel)]="deleteConfirm" name="delete_confirm" [disabled]="accountBusy">
+          <label for="delete-confirm">Type DELETE to confirm</label>
+          <input id="delete-confirm" type="text" [(ngModel)]="deleteConfirm" name="delete_confirm" [disabled]="accountBusy" aria-describedby="delete-hint">
+          <span id="delete-hint" class="sr-only">Type the word DELETE in capitals to enable deletion</span>
         </div>
         <button type="button" class="save-btn danger" (click)="requestAccountDeletion()" [disabled]="accountBusy">
           Delete Account
         </button>
       </div>
 
-      <p class="panel-status ok" *ngIf="accountMessage">{{ accountMessage }}</p>
-      <p class="panel-status error" *ngIf="accountError">{{ accountError }}</p>
-      <p class="panel-status ok" *ngIf="deleteMessage">{{ deleteMessage }}</p>
-      <p class="panel-status error" *ngIf="deleteError">{{ deleteError }}</p>
+      <p class="panel-status ok" *ngIf="accountMessage" role="status" aria-live="polite">{{ accountMessage }}</p>
+      <p class="panel-status error" *ngIf="accountError" role="alert" aria-live="assertive">{{ accountError }}</p>
+      <p class="panel-status ok" *ngIf="deleteMessage" role="status" aria-live="polite">{{ deleteMessage }}</p>
+      <p class="panel-status error" *ngIf="deleteError" role="alert" aria-live="assertive">{{ deleteError }}</p>
     </div>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('theme')" (keydown.enter)="togglePanel('theme')" (keydown.space)="togglePanel('theme')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'theme'"
+      aria-controls="panel-theme"
+      (click)="togglePanel('theme')"
+      (keydown.enter)="togglePanel('theme')"
+      (keydown.space)="$event.preventDefault(); togglePanel('theme')"
+    >
       <div>
         <h2>Site Theme</h2>
         <p>Radically alter the dark luxury chaotic aesthetic of Dragonfly Archive.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'theme'">
-      <div class="theme-options">
-        <button type="button" class="theme-btn" [class.active]="activeTheme === 'luxury'" (click)="selectTheme('luxury')">Model Avant-Garde Luxury</button>
-        <button type="button" class="theme-btn" [class.active]="activeTheme === 'medieval'" (click)="selectTheme('medieval')">Medieval Futurism</button>
-        <button type="button" class="theme-btn" [class.active]="activeTheme === 'blobjects'" (click)="selectTheme('blobjects')">2000s Blobjects</button>
-        <button type="button" class="theme-btn" [class.active]="activeTheme === 'steampunk'" (click)="selectTheme('steampunk')">Steampunk</button>
-        <button type="button" class="theme-btn" [class.active]="activeTheme === 'vectoflourish'" (click)="selectTheme('vectoflourish')">VectoFlourish</button>
-        <button type="button" class="theme-btn" [class.active]="activeTheme === 'cleartech'" (click)="selectTheme('cleartech')">ClearTech</button>
+    <div id="panel-theme" class="settings-panel" *ngIf="activePanel === 'theme'">
+      <div class="theme-options" role="group" aria-label="Choose a theme">
+        <button type="button" class="theme-btn" [class.active]="activeTheme === 'luxury'" [attr.aria-pressed]="activeTheme === 'luxury'" (click)="selectTheme('luxury')">Model Avant-Garde Luxury</button>
+        <button type="button" class="theme-btn" [class.active]="activeTheme === 'medieval'" [attr.aria-pressed]="activeTheme === 'medieval'" (click)="selectTheme('medieval')">Medieval Futurism</button>
+        <button type="button" class="theme-btn" [class.active]="activeTheme === 'blobjects'" [attr.aria-pressed]="activeTheme === 'blobjects'" (click)="selectTheme('blobjects')">2000s Blobjects</button>
+        <button type="button" class="theme-btn" [class.active]="activeTheme === 'steampunk'" [attr.aria-pressed]="activeTheme === 'steampunk'" (click)="selectTheme('steampunk')">Steampunk</button>
+        <button type="button" class="theme-btn" [class.active]="activeTheme === 'vectoflourish'" [attr.aria-pressed]="activeTheme === 'vectoflourish'" (click)="selectTheme('vectoflourish')">VectoFlourish</button>
+        <button type="button" class="theme-btn" [class.active]="activeTheme === 'cleartech'" [attr.aria-pressed]="activeTheme === 'cleartech'" (click)="selectTheme('cleartech')">ClearTech</button>
       </div>
     </div>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('privacy')" (keydown.enter)="togglePanel('privacy')" (keydown.space)="togglePanel('privacy')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'privacy'"
+      aria-controls="panel-privacy"
+      (click)="togglePanel('privacy')"
+      (keydown.enter)="togglePanel('privacy')"
+      (keydown.space)="$event.preventDefault(); togglePanel('privacy')"
+    >
       <div>
         <h2>Privacy</h2>
         <p>Decide what others can see.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'privacy'">
+    <div id="panel-privacy" class="settings-panel" *ngIf="activePanel === 'privacy'">
       <label class="toggle-row">
-        <input type="checkbox" [(ngModel)]="privacy.publicProfile">
+        <input type="checkbox" [(ngModel)]="privacy.publicProfile" id="privacy-public-profile">
         Public profile
       </label>
       <label class="toggle-row">
-        <input type="checkbox" [(ngModel)]="privacy.showLikedSongs">
+        <input type="checkbox" [(ngModel)]="privacy.showLikedSongs" id="privacy-liked-songs">
         Show liked songs
       </label>
       <label class="toggle-row">
-        <input type="checkbox" [(ngModel)]="privacy.showListeningActivity">
+        <input type="checkbox" [(ngModel)]="privacy.showListeningActivity" id="privacy-listening">
         Show listening activity
       </label>
       <button type="button" class="save-btn" (click)="savePrivacy()" [disabled]="settingsBusy">
         Save Privacy
       </button>
-      <p class="panel-status ok" *ngIf="settingsMessage">{{ settingsMessage }}</p>
-      <p class="panel-status error" *ngIf="settingsError">{{ settingsError }}</p>
+      <p class="panel-status ok" *ngIf="settingsMessage" role="status" aria-live="polite">{{ settingsMessage }}</p>
+      <p class="panel-status error" *ngIf="settingsError" role="alert" aria-live="assertive">{{ settingsError }}</p>
     </div>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('notifications')" (keydown.enter)="togglePanel('notifications')" (keydown.space)="togglePanel('notifications')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'notifications'"
+      aria-controls="panel-notifications"
+      (click)="togglePanel('notifications')"
+      (keydown.enter)="togglePanel('notifications')"
+      (keydown.space)="$event.preventDefault(); togglePanel('notifications')"
+    >
       <div>
         <h2>Notifications</h2>
         <p>Choose what reaches your inbox.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'notifications'">
+    <div id="panel-notifications" class="settings-panel" *ngIf="activePanel === 'notifications'">
       <label class="toggle-row">
         <input type="checkbox" [(ngModel)]="notifications.emailReleases">
         New releases from artists I follow
@@ -143,20 +180,29 @@
       <button type="button" class="save-btn" (click)="saveNotifications()" [disabled]="settingsBusy">
         Save Notifications
       </button>
-      <p class="panel-status ok" *ngIf="settingsMessage">{{ settingsMessage }}</p>
-      <p class="panel-status error" *ngIf="settingsError">{{ settingsError }}</p>
+      <p class="panel-status ok" *ngIf="settingsMessage" role="status" aria-live="polite">{{ settingsMessage }}</p>
+      <p class="panel-status error" *ngIf="settingsError" role="alert" aria-live="assertive">{{ settingsError }}</p>
     </div>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('playback')" (keydown.enter)="togglePanel('playback')" (keydown.space)="togglePanel('playback')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'playback'"
+      aria-controls="panel-playback"
+      (click)="togglePanel('playback')"
+      (keydown.enter)="togglePanel('playback')"
+      (keydown.space)="$event.preventDefault(); togglePanel('playback')"
+    >
       <div>
         <h2>Playback</h2>
         <p>Control how your player behaves.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'playback'">
+    <div id="panel-playback" class="settings-panel" *ngIf="activePanel === 'playback'">
       <label class="toggle-row">
         <input type="checkbox" [(ngModel)]="playback.autoplay">
         Autoplay next track
@@ -166,75 +212,93 @@
         Hide explicit content
       </label>
       <div class="form-group">
-        <label>Default Volume ({{ playback.defaultVolume }}%)</label>
-        <input type="range" min="0" max="100" [(ngModel)]="playback.defaultVolume">
+        <label for="default-volume">Default Volume ({{ playback.defaultVolume }}%)</label>
+        <input id="default-volume" type="range" min="0" max="100" [(ngModel)]="playback.defaultVolume" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="playback.defaultVolume">
       </div>
       <button type="button" class="save-btn" (click)="savePlayback()" [disabled]="settingsBusy">
         Save Playback
       </button>
-      <p class="panel-status ok" *ngIf="settingsMessage">{{ settingsMessage }}</p>
-      <p class="panel-status error" *ngIf="settingsError">{{ settingsError }}</p>
+      <p class="panel-status ok" *ngIf="settingsMessage" role="status" aria-live="polite">{{ settingsMessage }}</p>
+      <p class="panel-status error" *ngIf="settingsError" role="alert" aria-live="assertive">{{ settingsError }}</p>
     </div>
   </div>
 
   <div class="settings-card" *ngIf="artistGranted || (isArtist$ | async)">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('artist-tools')" (keydown.enter)="togglePanel('artist-tools')" (keydown.space)="togglePanel('artist-tools')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'artist-tools'"
+      aria-controls="panel-artist-tools"
+      (click)="togglePanel('artist-tools')"
+      (keydown.enter)="togglePanel('artist-tools')"
+      (keydown.space)="$event.preventDefault(); togglePanel('artist-tools')"
+    >
       <div>
         <h2>Artist Tools</h2>
         <p>Keep your payouts and socials updated.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'artist-tools'">
+    <div id="panel-artist-tools" class="settings-panel" *ngIf="activePanel === 'artist-tools'">
       <div class="form-group">
-        <label>Payout Email</label>
-        <input type="email" [(ngModel)]="artistTools.payoutEmail" name="payout_email" [disabled]="settingsBusy">
+        <label for="payout-email">Payout Email</label>
+        <input id="payout-email" type="email" [(ngModel)]="artistTools.payoutEmail" name="payout_email" [disabled]="settingsBusy" autocomplete="email">
       </div>
       <div class="form-group">
-        <label>PayPal</label>
-        <input type="text" [(ngModel)]="artistTools.paypal" name="paypal" [disabled]="settingsBusy">
+        <label for="paypal">PayPal</label>
+        <input id="paypal" type="text" [(ngModel)]="artistTools.paypal" name="paypal" [disabled]="settingsBusy">
       </div>
       <div class="form-group">
-        <label>Instagram</label>
-        <input type="text" [(ngModel)]="artistTools.instagram" name="instagram" [disabled]="settingsBusy">
+        <label for="instagram">Instagram</label>
+        <input id="instagram" type="text" [(ngModel)]="artistTools.instagram" name="instagram" [disabled]="settingsBusy" autocomplete="url">
       </div>
       <div class="form-group">
-        <label>TikTok</label>
-        <input type="text" [(ngModel)]="artistTools.tiktok" name="tiktok" [disabled]="settingsBusy">
+        <label for="tiktok">TikTok</label>
+        <input id="tiktok" type="text" [(ngModel)]="artistTools.tiktok" name="tiktok" [disabled]="settingsBusy">
       </div>
       <div class="form-group">
-        <label>Website</label>
-        <input type="text" [(ngModel)]="artistTools.website" name="website" [disabled]="settingsBusy">
+        <label for="artist-website">Website</label>
+        <input id="artist-website" type="text" [(ngModel)]="artistTools.website" name="website" [disabled]="settingsBusy" autocomplete="url">
       </div>
       <button type="button" class="save-btn" (click)="saveArtistTools()" [disabled]="settingsBusy">
         Save Artist Tools
       </button>
       <a class="lux-btn secondary" routerLink="/artist/releases">Manage Releases</a>
-      <p class="panel-status ok" *ngIf="settingsMessage">{{ settingsMessage }}</p>
-      <p class="panel-status error" *ngIf="settingsError">{{ settingsError }}</p>
+      <p class="panel-status ok" *ngIf="settingsMessage" role="status" aria-live="polite">{{ settingsMessage }}</p>
+      <p class="panel-status error" *ngIf="settingsError" role="alert" aria-live="assertive">{{ settingsError }}</p>
     </div>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('support')" (keydown.enter)="togglePanel('support')" (keydown.space)="togglePanel('support')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'support'"
+      aria-controls="panel-support"
+      (click)="togglePanel('support')"
+      (keydown.enter)="togglePanel('support')"
+      (keydown.space)="$event.preventDefault(); togglePanel('support')"
+    >
       <div>
         <h2>Support</h2>
         <p>Report a bug or ask for help.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'support'">
+    <div id="panel-support" class="settings-panel" *ngIf="activePanel === 'support'">
       <div class="form-group">
-        <label>Subject</label>
-        <input type="text" [(ngModel)]="supportSubject" name="support_subject" [disabled]="supportBusy">
+        <label for="support-subject">Subject</label>
+        <input id="support-subject" type="text" [(ngModel)]="supportSubject" name="support_subject" [disabled]="supportBusy">
       </div>
       <div class="form-group">
-        <label>Message</label>
-        <textarea [(ngModel)]="supportMessage" name="support_message" [disabled]="supportBusy"></textarea>
+        <label for="support-message">Message</label>
+        <textarea id="support-message" [(ngModel)]="supportMessage" name="support_message" [disabled]="supportBusy"></textarea>
       </div>
       <div class="form-group">
-        <label>Contact Email (optional)</label>
-        <input type="email" [(ngModel)]="supportEmail" name="support_email" [disabled]="supportBusy">
+        <label for="support-email">Contact Email (optional)</label>
+        <input id="support-email" type="email" [(ngModel)]="supportEmail" name="support_email" [disabled]="supportBusy" autocomplete="email">
       </div>
       <button type="button" class="save-btn" (click)="submitSupport()" [disabled]="supportBusy">
         Send Support Request
@@ -242,20 +306,29 @@
       <button type="button" class="save-btn" (click)="openBugModal()" style="margin-left: 10px;">
         Report a Bug (Advanced)
       </button>
-      <p class="panel-status ok" *ngIf="supportOk">{{ supportOk }}</p>
-      <p class="panel-status error" *ngIf="supportError">{{ supportError }}</p>
+      <p class="panel-status ok" *ngIf="supportOk" role="status" aria-live="polite">{{ supportOk }}</p>
+      <p class="panel-status error" *ngIf="supportError" role="alert" aria-live="assertive">{{ supportError }}</p>
     </div>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('export')" (keydown.enter)="togglePanel('export')" (keydown.space)="togglePanel('export')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'export'"
+      aria-controls="panel-export"
+      (click)="togglePanel('export')"
+      (keydown.enter)="togglePanel('export')"
+      (keydown.space)="$event.preventDefault(); togglePanel('export')"
+    >
       <div>
         <h2>Export Data</h2>
         <p>Download a copy of your profile data.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'export'">
+    <div id="panel-export" class="settings-panel" *ngIf="activePanel === 'export'">
       <button type="button" class="save-btn" (click)="exportData()">
         Download JSON Export
       </button>
@@ -263,85 +336,125 @@
   </div>
 
   <div class="settings-card" *ngIf="!(artistGranted || (isArtist$ | async))">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('artist')" (keydown.enter)="togglePanel('artist')" (keydown.space)="togglePanel('artist')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'artist'"
+      aria-controls="panel-artist"
+      (click)="togglePanel('artist')"
+      (keydown.enter)="togglePanel('artist')"
+      (keydown.space)="$event.preventDefault(); togglePanel('artist')"
+    >
       <div>
         <h2>Artist Access</h2>
         <p>Apply for an artist profile to upload releases.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'artist'">
+    <div id="panel-artist" class="settings-panel" *ngIf="activePanel === 'artist'">
       <div class="form-group">
-        <label>Artist Name</label>
-        <input type="text" [(ngModel)]="artistData.artist_name" name="artist_name" [disabled]="artistBusy">
+        <label for="artist-name">Artist Name</label>
+        <input id="artist-name" type="text" [(ngModel)]="artistData.artist_name" name="artist_name" [disabled]="artistBusy">
       </div>
 
       <div class="form-group">
-        <label>Artist Bio</label>
-        <textarea [(ngModel)]="artistData.bio" name="artist_bio" [disabled]="artistBusy"></textarea>
+        <label for="artist-bio">Artist Bio</label>
+        <textarea id="artist-bio" [(ngModel)]="artistData.bio" name="artist_bio" [disabled]="artistBusy"></textarea>
       </div>
 
       <div class="form-group">
-        <label>Genre</label>
-        <input type="text" [(ngModel)]="artistData.genre" name="artist_genre" [disabled]="artistBusy">
+        <label for="artist-genre">Genre</label>
+        <input id="artist-genre" type="text" [(ngModel)]="artistData.genre" name="artist_genre" [disabled]="artistBusy">
       </div>
 
       <button type="button" class="save-btn" (click)="submitArtistAccess()" [disabled]="artistBusy">
         Request Artist Access
       </button>
 
-      <p class="panel-status ok" *ngIf="artistMessage">{{ artistMessage }}</p>
-      <p class="panel-status error" *ngIf="artistError">{{ artistError }}</p>
+      <p class="panel-status ok" *ngIf="artistMessage" role="status" aria-live="polite">{{ artistMessage }}</p>
+      <p class="panel-status error" *ngIf="artistError" role="alert" aria-live="assertive">{{ artistError }}</p>
     </div>
   </div>
 
   <div class="settings-card">
-    <div class="settings-row" role="button" tabindex="0" (click)="togglePanel('password')" (keydown.enter)="togglePanel('password')" (keydown.space)="togglePanel('password')">
+    <div
+      class="settings-row"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="activePanel === 'password'"
+      aria-controls="panel-password"
+      (click)="togglePanel('password')"
+      (keydown.enter)="togglePanel('password')"
+      (keydown.space)="$event.preventDefault(); togglePanel('password')"
+    >
       <div>
         <h2>Forgot Password</h2>
         <p>Send a reset link to your account email.</p>
       </div>
     </div>
 
-    <div class="settings-panel" *ngIf="activePanel === 'password'">
+    <div id="panel-password" class="settings-panel" *ngIf="activePanel === 'password'">
       <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" [(ngModel)]="resetEmail" name="reset_email" [disabled]="resetBusy">
+        <label for="reset-email">Email Address</label>
+        <input id="reset-email" type="email" [(ngModel)]="resetEmail" name="reset_email" [disabled]="resetBusy" autocomplete="email">
       </div>
 
       <button type="button" class="save-btn" (click)="requestPasswordReset()" [disabled]="resetBusy">
         Send Reset Link
       </button>
 
-      <p class="panel-status ok" *ngIf="resetMessage">{{ resetMessage }}</p>
-      <p class="panel-status error" *ngIf="resetError">{{ resetError }}</p>
+      <p class="panel-status ok" *ngIf="resetMessage" role="status" aria-live="polite">{{ resetMessage }}</p>
+      <p class="panel-status error" *ngIf="resetError" role="alert" aria-live="assertive">{{ resetError }}</p>
     </div>
   </div>
 
 </section>
 
 <!-- Bug Modal -->
-<section class="bug-modal-backdrop" *ngIf="bugModalOpen" (click)="closeBugModal()">
-  <div class="bug-modal" (click)="$event.stopPropagation()">
+<div
+  class="bug-modal-backdrop"
+  *ngIf="bugModalOpen"
+  role="presentation"
+  (click)="closeBugModal()"
+>
+  <div
+    class="bug-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="bug-modal-title"
+    (click)="$event.stopPropagation()"
+  >
     <header>
-      <h2>Report a Bug</h2>
-      <button type="button" class="bug-close" (click)="closeBugModal()">x</button>
+      <h2 id="bug-modal-title">Report a Bug</h2>
+      <button type="button" class="bug-close" (click)="closeBugModal()" aria-label="Close bug report dialog">
+        <span aria-hidden="true">✕</span>
+      </button>
     </header>
 
     <p class="bug-hint">Send a technical bug report with your current navigator user-agent and session info attached.</p>
+
+    <label for="bug-email" class="sr-only">Email (optional)</label>
     <input
+      id="bug-email"
       type="email"
       placeholder="Email (optional)"
       [(ngModel)]="bugEmail"
-      [disabled]="bugSubmitting">
+      [disabled]="bugSubmitting"
+      autocomplete="email"
+    >
+
+    <label for="bug-message" class="sr-only">Bug description</label>
     <textarea
+      id="bug-message"
       rows="5"
       placeholder="Describe what happened, expected behavior, and steps to reproduce."
       [(ngModel)]="bugMessage"
-      [disabled]="bugSubmitting"></textarea>
+      [disabled]="bugSubmitting"
+    ></textarea>
 
-    <p class="bug-error" *ngIf="bugError">{{ bugError }}</p>
-    <p class="bug-success" *ngIf="bugSuccess">{{ bugSuccess }}</p>
+    <p class="bug-error" *ngIf="bugError" role="alert" aria-live="assertive">{{ bugError }}</p>
+    <p class="bug-success" *ngIf="bugSuccess" role="status" aria-live="polite">{{ bugSuccess }}</p>
 
     <div class="bug-actions">
       <button type="button" class="secondary" (click)="closeBugModal()" [disabled]="bugSubmitting">Cancel</button>
@@ -350,4 +463,4 @@
       </button>
     </div>
   </div>
-</section>
+</div>

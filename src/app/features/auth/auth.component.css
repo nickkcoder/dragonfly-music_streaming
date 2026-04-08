@@ -237,14 +237,31 @@
   font-size: 0.9rem;
 }
 
-.switch-mode span {
+.switch-mode-btn {
   cursor: pointer;
   color: var(--text-main);
+  background: none;
+  border: none;
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+}
+
+.switch-mode-btn:hover {
+  color: var(--accent-primary);
 }
 
 .close-btn {
   cursor: pointer;
   transition: 0.3s;
+  /* Reset button defaults */
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0;
 }
 
 .close-btn:hover {

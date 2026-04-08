@@ -1,44 +1,74 @@
-<section class="discover-hero">
-  <h1>Discover</h1>
+<section class="discover-hero" aria-labelledby="discover-heading">
+  <h1 id="discover-heading">Discover</h1>
   <p>Live artists and songs from the archive.</p>
   <div class="discover-search-wrap">
+    <label for="discover-search" class="sr-only">Search artists or songs</label>
     <input
+      id="discover-search"
       type="text"
       class="discover-search"
       placeholder="Search artists or songs..."
-      [(ngModel)]="searchTerm">
+      [(ngModel)]="searchTerm"
+      aria-label="Search artists or songs"
+    >
   </div>
-  <div class="discover-controls">
-    <select [(ngModel)]="sectionFilter">
+  <div class="discover-controls" role="group" aria-label="Filters">
+    <label for="filter-section" class="sr-only">Show</label>
+    <select id="filter-section" [(ngModel)]="sectionFilter" aria-label="Show section">
       <option value="all">All</option>
       <option value="artists">Artists only</option>
       <option value="songs">Songs only</option>
     </select>
-    <select [(ngModel)]="artistGenreFilter">
+
+    <label for="filter-artist-genre" class="sr-only">Artist genre</label>
+    <select id="filter-artist-genre" [(ngModel)]="artistGenreFilter" aria-label="Filter by artist genre">
       <option value="all">All artist genres</option>
       <option *ngFor="let genre of artistGenreOptions" [value]="genre.toLowerCase()">{{ genre }}</option>
     </select>
-    <select [(ngModel)]="songGenreFilter">
+
+    <label for="filter-song-genre" class="sr-only">Song genre</label>
+    <select id="filter-song-genre" [(ngModel)]="songGenreFilter" aria-label="Filter by song genre">
       <option value="all">All song genres</option>
       <option *ngFor="let genre of songGenreOptions" [value]="genre.toLowerCase()">{{ genre }}</option>
     </select>
   </div>
 </section>
 
-<section class="discover-content">
-  <p class="status loading" *ngIf="loading">Loading discover data...</p>
-  <p class="status error" *ngIf="error">{{ error }}</p>
+<section class="discover-content" aria-label="Results">
+  <p
+    class="status loading"
+    *ngIf="loading"
+    role="status"
+    aria-live="polite"
+    aria-label="Loading discover data"
+  >
+    Loading discover data...
+  </p>
+  <p
+    class="status error"
+    *ngIf="error"
+    role="alert"
+    aria-live="assertive"
+  >
+    {{ error }}
+  </p>
 
   <div class="content-grid" *ngIf="!loading && !error">
-    <article class="panel" *ngIf="showArtistsSection">
+    <article class="panel" *ngIf="showArtistsSection" aria-labelledby="artists-heading">
       <div class="panel-head">
-        <h2>Artists</h2>
-        <span>{{ filteredArtists.length }}</span>
+        <h2 id="artists-heading">Artists</h2>
+        <span [attr.aria-label]="filteredArtists.length + ' artists found'">{{ filteredArtists.length }}</span>
       </div>
 
-      <div class="artist-grid">
-        <a class="artist-card" *ngFor="let artist of filteredArtists" [routerLink]="['/artist', artist.id]">
-          <img [src]="artist.image" [alt]="artist.name">
+      <div class="artist-grid" role="list">
+        <a
+          class="artist-card"
+          *ngFor="let artist of filteredArtists"
+          [routerLink]="['/artist', artist.id]"
+          role="listitem"
+          [attr.aria-label]="artist.name + ', ' + artist.genre"
+        >
+          <img [src]="artist.image" [alt]="artist.name + ' profile photo'">
           <div class="artist-meta">
             <h3>{{ artist.name }}</h3>
             <p>{{ artist.genre }}</p>
@@ -46,35 +76,60 @@
         </a>
       </div>
 
-      <p class="empty" *ngIf="!filteredArtists.length">No artists found.</p>
+      <p class="empty" *ngIf="!filteredArtists.length" role="status">No artists found.</p>
     </article>
 
-    <article class="panel" *ngIf="showSongsSection">
+    <article class="panel" *ngIf="showSongsSection" aria-labelledby="songs-heading">
       <div class="panel-head">
-        <h2>Songs</h2>
-        <span>{{ filteredSongs.length }}</span>
+        <h2 id="songs-heading">Songs</h2>
+        <span [attr.aria-label]="filteredSongs.length + ' songs found'">{{ filteredSongs.length }}</span>
       </div>
 
-      <div class="song-list">
-        <div class="song-row song-row-clickable" *ngFor="let song of filteredSongs" (click)="playSong(song)">
+      <div class="song-list" role="list">
+        <div
+          class="song-row song-row-clickable"
+          *ngFor="let song of filteredSongs"
+          role="listitem"
+          tabindex="0"
+          (click)="playSong(song)"
+          (keydown.enter)="playSong(song)"
+          (keydown.space)="$event.preventDefault(); playSong(song)"
+          [attr.aria-label]="'Play ' + song.title + ' by ' + song.artistName"
+        >
           <div class="song-main">
-            <img class="song-mini-cover" [src]="song.coverImage" [alt]="song.title">
+            <img
+              class="song-mini-cover"
+              [src]="song.coverImage"
+              [alt]="song.title + ' album art'"
+            >
             <div>
-            <h3>{{ song.title }}</h3>
-            <p>{{ song.artistName }}</p>
+              <h3>{{ song.title }}</h3>
+              <p>{{ song.artistName }}</p>
             </div>
           </div>
           <div class="song-right">
             <span>{{ song.genre }}</span>
             <div class="song-actions">
-              <button type="button" (click)="playNext(song, $event)">Play next</button>
-              <button type="button" (click)="addToQueue(song, $event)">Add to queue</button>
+              <button
+                type="button"
+                (click)="playNext(song, $event)"
+                [attr.aria-label]="'Play ' + song.title + ' next'"
+              >
+                Play next
+              </button>
+              <button
+                type="button"
+                (click)="addToQueue(song, $event)"
+                [attr.aria-label]="'Add ' + song.title + ' to queue'"
+              >
+                Add to queue
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <p class="empty" *ngIf="!filteredSongs.length">No songs found.</p>
+      <p class="empty" *ngIf="!filteredSongs.length" role="status">No songs found.</p>
     </article>
   </div>
 </section>

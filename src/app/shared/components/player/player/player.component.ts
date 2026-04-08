@@ -24,11 +24,20 @@ export class PlayerComponent {
   private readonly onLoadedMetadata = () => {
     this.duration = this.formatTime(this.audio.duration);
   };
-  private readonly onEnded = () => this.next();
+  private readonly onEnded = () => {
+    if (this.isRepeating) {
+      this.audio.currentTime = 0;
+      this.audio.play();
+    } else {
+      this.next();
+    }
+  };
 
   isPlaying = false;
   progress = 0;
   isExpanded = false;
+  isShuffled = false;
+  isRepeating = false;
 
   audio!: HTMLAudioElement;
 
@@ -41,6 +50,9 @@ export class PlayerComponent {
 
   currentTime = '0:00';
   duration = '0:00';
+
+  waveformBars: number[] = [];
+  readonly WAVEFORM_BARS = 70;
 
   recentlyPlayed: PlayerTrack[] = [];
   queue: PlayerTrack[] = [];
@@ -90,6 +102,7 @@ export class PlayerComponent {
       this.loadTrack(track, { autoplay: true, pushCurrentToHistory: true, addToRecent: true });
     });
 
+    this.generateWaveform(this.currentTrack.src);
     this.refreshLikeState();
   }
 
@@ -152,6 +165,14 @@ export class PlayerComponent {
       this.activeExpandedTab = null;
       this.isSidebarOpen = true;
     }
+  }
+
+  toggleShuffle() {
+    this.isShuffled = !this.isShuffled;
+  }
+
+  toggleRepeat() {
+    this.isRepeating = !this.isRepeating;
   }
 
   selectExpandedTab(tab: 'recent' | 'queue') {
@@ -237,6 +258,7 @@ export class PlayerComponent {
 
     this.currentTime = '0:00';
     this.progress = 0;
+    this.generateWaveform(track.src);
 
     if (opts.autoplay) {
       this.audio.play();
@@ -317,6 +339,19 @@ export class PlayerComponent {
         // Back-end may not support liked songs; keep UI stable without logging.
         this.isCurrentTrackLiked = false;
       }
+    });
+  }
+
+  private generateWaveform(seed: string) {
+    // Seeded pseudo-random so bars are consistent per track
+    let h = 0;
+    for (let i = 0; i < seed.length; i++) {
+      h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+    }
+    this.waveformBars = Array.from({ length: this.WAVEFORM_BARS }, (_, i) => {
+      h = ((h << 5) - h + i * 2654435761) | 0;
+      const raw = Math.abs(h % 1000) / 1000; // 0–1
+      return 0.2 + raw * 0.8; // clamp to 0.2–1.0
     });
   }
 

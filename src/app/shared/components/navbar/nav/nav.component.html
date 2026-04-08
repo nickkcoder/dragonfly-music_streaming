@@ -1,22 +1,36 @@
-<nav class="navbar" [class.scrolled]="isScrolled">
+<nav class="navbar" [class.scrolled]="isScrolled" aria-label="Main navigation">
     <div class="nav-inner">
 
         <!-- Left Section: Logo + Home -->
         <div class="nav-left" *ngIf="!searchActive">
-            <div class="logo magnetic" routerLink="/home" (mousemove)="magnet($event)"
-                (mouseleave)="resetMagnet($event)">
-                <span class="brand-main shimmer">DRAGONFLY</span>
-                <span class="brand-accent">ARCHIVE</span>
-            </div>
+            <a
+                class="logo magnetic"
+                routerLink="/home"
+                (mousemove)="magnet($event)"
+                (mouseleave)="resetMagnet($event)"
+                aria-label="Dragonfly Archive — go to home"
+            >
+                <span class="brand-main shimmer" aria-hidden="true">DRAGONFLY</span>
+                <span class="brand-accent" aria-hidden="true">ARCHIVE</span>
+            </a>
         </div>
 
         <!-- Center Section: Search Bar -->
         <div class="nav-center" *ngIf="!isDiscoverRoute" [class.search-expanded]="searchActive">
             <div class="search-container">
+                <!-- Search label (screen reader only) -->
+                <label for="nav-search-input" class="sr-only">Search</label>
+
                 <!-- Mobile Search Icon (visible only on mobile) -->
-                <button class="icon-btn search-toggle-btn" (click)="toggleSearch()">
+                <button
+                    class="icon-btn search-toggle-btn"
+                    (click)="toggleSearch()"
+                    aria-label="Open search"
+                    [attr.aria-expanded]="searchActive"
+                    type="button"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search" aria-hidden="true">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
@@ -24,11 +38,23 @@
 
                 <!-- Search Input Group -->
                 <div class="search-input-wrapper">
-                    <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
-                        class="search-input">
-                    <button class="icon-btn close-search-btn" (click)="toggleSearch()">
+                    <input
+                        id="nav-search-input"
+                        type="text"
+                        placeholder="Search..."
+                        [(ngModel)]="searchQuery"
+                        (keyup.enter)="onSearch()"
+                        class="search-input"
+                        aria-label="Search music"
+                    >
+                    <button
+                        class="icon-btn close-search-btn"
+                        (click)="toggleSearch()"
+                        aria-label="Close search"
+                        type="button"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x" aria-hidden="true">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
@@ -42,27 +68,48 @@
             <span
                 class="role-badge"
                 [ngClass]="getRoleBadgeClass(getRoleBadgeLabel(role$ | async, isAdmin$ | async))"
-                *ngIf="shouldShowRoleBadge(role$ | async, isAdmin$ | async)">
-                <span class="role-badge-icon"></span>
+                *ngIf="shouldShowRoleBadge(role$ | async, isAdmin$ | async)"
+                [attr.aria-label]="'Your role: ' + getRoleBadgeLabel(role$ | async, isAdmin$ | async)"
+            >
+                <span class="role-badge-icon" aria-hidden="true"></span>
                 {{ getRoleBadgeLabel(role$ | async, isAdmin$ | async) }}
             </span>
-            <!-- Hamburger icon (mobile) -->
-            <div class="hamburger" [class.active]="mobileOpen" (click)="toggleMobile()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <!-- Hamburger button (mobile) -->
+            <button
+                class="hamburger"
+                [class.active]="mobileOpen"
+                (click)="toggleMobile()"
+                type="button"
+                [attr.aria-label]="mobileOpen ? 'Close navigation menu' : 'Open navigation menu'"
+                [attr.aria-expanded]="mobileOpen"
+                aria-controls="mobile-nav-menu"
+            >
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
         </div>
 
         <!-- Full-screen mobile menu overlay -->
-        <div class="mobile-menu" [class.open]="mobileOpen" (scroll)="onMenuScroll($event)">
+        <div
+            id="mobile-nav-menu"
+            class="mobile-menu"
+            [class.open]="mobileOpen"
+            (scroll)="onMenuScroll($event)"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            [attr.aria-hidden]="!mobileOpen"
+        >
             <ul class="nav-links-mobile" [style.transform]="'rotateX(' + menuRotation + 'deg)'">
                 <li>
                     <span
                         class="role-badge-mobile"
                         [ngClass]="getRoleBadgeClass(getRoleBadgeLabel(role$ | async, isAdmin$ | async))"
-                        *ngIf="shouldShowRoleBadge(role$ | async, isAdmin$ | async)">
-                        <span class="role-badge-icon"></span>
+                        *ngIf="shouldShowRoleBadge(role$ | async, isAdmin$ | async)"
+                        [attr.aria-label]="'Your role: ' + getRoleBadgeLabel(role$ | async, isAdmin$ | async)"
+                    >
+                        <span class="role-badge-icon" aria-hidden="true"></span>
                         {{ getRoleBadgeLabel(role$ | async, isAdmin$ | async) }}
                     </span>
                 </li>

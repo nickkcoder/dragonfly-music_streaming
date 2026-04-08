@@ -1,15 +1,26 @@
-<section class="streaming-home">
+<section class="streaming-home" aria-label="Home">
   
   <header class="home-header">
     <h1>{{ greeting }}</h1>
   </header>
 
-  <div class="quick-picks-grid">
-    <a *ngFor="let pick of quickPicks" [routerLink]="pick.link" class="quick-pick-card">
-      <img [src]="pick.img" alt="Cover" loading="lazy" />
+  <div class="quick-picks-grid" role="list" aria-label="Quick picks">
+    <a
+      *ngFor="let pick of quickPicks"
+      [routerLink]="pick.link"
+      class="quick-pick-card"
+      role="listitem"
+      [attr.aria-label]="pick.title"
+    >
+      <img [src]="pick.img" [alt]="pick.title" loading="lazy" />
       <h3>{{ pick.title }}</h3>
-      <button class="play-btn-circle" (click)="$event.preventDefault()">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <button
+        class="play-btn-circle"
+        type="button"
+        (click)="$event.preventDefault()"
+        [attr.aria-label]="'Play ' + pick.title"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <polygon points="5 3 19 12 5 21 5 3"></polygon>
         </svg>
       </button>
@@ -18,14 +29,25 @@
 
   <div class="home-sections-split">
     
-    <section class="made-for-you-section">
-      <h2 class="section-title">Made For You</h2>
-      <div class="horizontal-scroll">
-        <div class="mix-card" *ngFor="let mix of madeForYou" routerLink="/discover">
+    <section class="made-for-you-section" aria-labelledby="made-for-you-heading">
+      <h2 id="made-for-you-heading" class="section-title">Made For You</h2>
+      <div class="horizontal-scroll" role="list">
+        <div
+          class="mix-card"
+          *ngFor="let mix of madeForYou"
+          routerLink="/discover"
+          role="listitem"
+          [attr.aria-label]="mix.title + ': ' + mix.description"
+        >
           <div class="mix-image-wrapper">
-            <img [src]="mix.img" alt="Cover" loading="lazy" />
-            <button class="play-btn-circle large" (click)="$event.preventDefault()">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <img [src]="mix.img" [alt]="mix.title" loading="lazy" />
+            <button
+              class="play-btn-circle large"
+              type="button"
+              (click)="$event.preventDefault()"
+              [attr.aria-label]="'Play ' + mix.title"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
               </svg>
             </button>
@@ -36,25 +58,53 @@
       </div>
     </section>
 
-    <section class="trending-section">
-      <h2 class="section-title">Trending Tracks</h2>
+    <section class="trending-section" aria-labelledby="trending-heading">
+      <h2 id="trending-heading" class="section-title">Trending Tracks</h2>
       
-      <div class="song-list">
-        <p *ngIf="trendingLoading" class="status-msg">Fetching trending hits...</p>
-        <p *ngIf="!trendingLoading && !trendingSongs.length" class="status-msg empty">No new tracks trending right now.</p>
+      <div class="song-list" role="list">
+        <p
+          *ngIf="trendingLoading"
+          class="status-msg"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading trending tracks"
+        >
+          Fetching trending hits...
+        </p>
+        <p
+          *ngIf="!trendingLoading && !trendingSongs.length"
+          class="status-msg empty"
+          role="status"
+          aria-live="polite"
+        >
+          No new tracks trending right now.
+        </p>
         
-        <div class="song-row song-row-clickable" *ngFor="let song of trendingSongs; let i = index" (click)="playSong(song, $event)">
+        <div
+          class="song-row song-row-clickable"
+          *ngFor="let song of trendingSongs; let i = index"
+          role="listitem"
+          tabindex="0"
+          (click)="playSong(song, $event)"
+          (keydown.enter)="playSong(song, $event)"
+          (keydown.space)="$event.preventDefault(); playSong(song, $event)"
+          [attr.aria-label]="'Play track ' + (i + 1) + ': ' + song.title + ' by ' + (song.artist_name || 'Unknown Artist')"
+        >
           <div class="song-main">
-            <span class="track-number">{{ i + 1 }}</span>
-            <img [src]="song.cover_url || song.coverImage || 'assets/default-cover.png'" class="song-mini-cover" alt="Cover" loading="lazy" />
+            <span class="track-number" aria-hidden="true">{{ i + 1 }}</span>
+            <img
+              [src]="song.cover_url || song.coverImage || 'assets/default-cover.png'"
+              class="song-mini-cover"
+              [alt]="song.title + ' album art'"
+              loading="lazy"
+            />
             <div class="song-meta">
               <h3 class="song-title-text">{{ song.title }}</h3>
               <p>{{ song.artist_name || 'Unknown Artist' }}</p>
             </div>
           </div>
           <div class="song-actions">
-            <!-- Simulated duration or real if available -->
-            <span class="duration">3:24</span>
+            <span class="duration" aria-label="Duration 3 minutes 24 seconds">3:24</span>
           </div>
         </div>
       </div>

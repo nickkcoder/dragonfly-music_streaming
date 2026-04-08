@@ -1,47 +1,100 @@
-<div class="auth-overlay" (click)="close()">
+<div class="auth-overlay" (click)="close()" role="presentation">
 
-  <div class="auth-card" [style.transform]="cardTransform" (click)="$event.stopPropagation()" (mousemove)="handleMouseMove($event)"
-    (mouseleave)="resetTilt()">
-    <div class="dust">
+  <div
+    class="auth-card"
+    [style.transform]="cardTransform"
+    (click)="$event.stopPropagation()"
+    (mousemove)="handleMouseMove($event)"
+    (mouseleave)="resetTilt()"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'auth-heading'"
+  >
+    <div class="dust" aria-hidden="true">
       <span *ngFor="let p of particles"></span>
     </div>
 
-
     <div class="auth-header">
-      <h2 class="glitch-text" [attr.data-text]="isLogin ? 'WELCOME BACK' : 'CREATE ACCOUNT'">
+      <h2 id="auth-heading" class="glitch-text" [attr.data-text]="isLogin ? 'WELCOME BACK' : 'CREATE ACCOUNT'">
         {{ isLogin ? 'WELCOME BACK' : 'CREATE ACCOUNT' }}
       </h2>
-      <span class="close-btn" (click)="close()">&times;</span>
+      <button
+        class="close-btn"
+        type="button"
+        (click)="close()"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
 
-    <form (ngSubmit)="submit()">
+    <form (ngSubmit)="submit()" [attr.aria-label]="isLogin ? 'Login form' : 'Registration form'">
 
-      <!-- Error Message Display -->
-      <div *ngIf="errorMessage" class="error-msg" [class.success-msg]="errorMessage.includes('successful')">
+      <!-- Error / success message — announced live -->
+      <div
+        *ngIf="errorMessage"
+        class="error-msg"
+        [class.success-msg]="errorMessage.includes('successful')"
+        role="alert"
+        aria-live="assertive"
+      >
         {{ errorMessage }}
       </div>
 
       <!-- Registration Only Fields -->
       <div *ngIf="!isLogin" class="input-group">
-        <input type="text" placeholder="Username" [(ngModel)]="registerData.username" name="regUsername" required />
+        <label for="reg-username" class="sr-only">Username</label>
+        <input
+          id="reg-username"
+          type="text"
+          placeholder="Username"
+          [(ngModel)]="registerData.username"
+          name="regUsername"
+          required
+          autocomplete="username"
+        />
       </div>
 
       <div *ngIf="!isLogin" class="input-group">
-        <input type="email" placeholder="Email" [(ngModel)]="registerData.email" name="regEmail" required />
+        <label for="reg-email" class="sr-only">Email</label>
+        <input
+          id="reg-email"
+          type="email"
+          placeholder="Email"
+          [(ngModel)]="registerData.email"
+          name="regEmail"
+          required
+          autocomplete="email"
+        />
       </div>
 
       <div *ngIf="!isLogin" class="input-group password-group">
-        <input [type]="showPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="registerData.password"
-          name="regPassword" required />
-        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
-          <!-- SVG Icons -->
+        <label for="reg-password" class="sr-only">Password</label>
+        <input
+          id="reg-password"
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          [(ngModel)]="registerData.password"
+          name="regPassword"
+          required
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          class="toggle-password"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          [attr.aria-pressed]="showPassword"
+        >
+          <!-- Eye open -->
           <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
+          <!-- Eye closed -->
           <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path
               d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
             </path>
@@ -52,21 +105,45 @@
 
       <!-- Login Only Fields -->
       <div *ngIf="isLogin" class="input-group">
-        <input type="email" placeholder="Email" [(ngModel)]="loginData.email" name="loginEmail" required />
+        <label for="login-email" class="sr-only">Email</label>
+        <input
+          id="login-email"
+          type="email"
+          placeholder="Email"
+          [(ngModel)]="loginData.email"
+          name="loginEmail"
+          required
+          autocomplete="email"
+        />
       </div>
 
       <div *ngIf="isLogin" class="input-group password-group">
-        <input [type]="showPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="loginData.password"
-          name="loginPassword" required />
-        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
-          <!-- SVG Icons -->
+        <label for="login-password" class="sr-only">Password</label>
+        <input
+          id="login-password"
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          [(ngModel)]="loginData.password"
+          name="loginPassword"
+          required
+          autocomplete="current-password"
+        />
+        <button
+          type="button"
+          class="toggle-password"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          [attr.aria-pressed]="showPassword"
+        >
+          <!-- Eye open -->
           <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
+          <!-- Eye closed -->
           <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path
               d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
             </path>
@@ -75,16 +152,25 @@
         </button>
       </div>
 
-      <button class="btn-gold full">
+      <button
+        class="btn-gold full"
+        type="submit"
+        [attr.aria-label]="isLogin ? 'Log in to your account' : 'Create a new account'"
+      >
         {{ isLogin ? 'LOGIN' : 'REGISTER' }}
       </button>
 
     </form>
 
     <div class="switch-mode">
-      <span (click)="toggleMode()">
+      <button
+        type="button"
+        class="switch-mode-btn"
+        (click)="toggleMode()"
+        [attr.aria-label]="isLogin ? 'Switch to create account' : 'Switch to log in'"
+      >
         {{ isLogin ? 'Create account' : 'Already have an account?' }}
-      </span>
+      </button>
     </div>
 
   </div>
