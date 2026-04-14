@@ -89,6 +89,8 @@ export class PlayerComponent {
     this.recentSub = this.playerService.recentlyPlayed$.subscribe((rows) => {
       this.recentlyPlayed = rows;
     });
+
+    this.generateWaveform(this.currentTrack.src);
   }
 
   ngAfterViewInit() {
@@ -101,8 +103,6 @@ export class PlayerComponent {
     this.playRequestSub = this.playerService.playRequest$.subscribe((track) => {
       this.loadTrack(track, { autoplay: true, pushCurrentToHistory: true, addToRecent: true });
     });
-
-    this.generateWaveform(this.currentTrack.src);
     this.refreshLikeState();
   }
 

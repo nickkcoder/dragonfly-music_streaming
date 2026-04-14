@@ -221,9 +221,9 @@ async function deleteSong(req, res) {
         }
 
         // Delete all child-table references first (FK constraints)
-        await conn.query('DELETE FROM user_likes WHERE song_id = ?', [song_id]);
-        await conn.query('DELETE FROM playlist_songs WHERE song_id = ?', [song_id]);
-        await conn.query('DELETE FROM album_tracks WHERE song_id = ?', [song_id]);
+        await conn.query('DELETE FROM user_likes WHERE song_id = ?', [song_id]).catch(() => {});
+        await conn.query('DELETE FROM playlist_songs WHERE song_id = ?', [song_id]).catch(() => {});
+        await conn.query('DELETE FROM album_tracks WHERE song_id = ?', [song_id]).catch(() => {});
 
         // user_listening_history may not exist yet on all deployments — ignore if missing
         await conn.query(
