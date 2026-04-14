@@ -813,10 +813,11 @@ router.delete('/songs/:id', authMiddleware, requireRole('admin'), async (req, re
         });
 
         // Clear FK child refs before deleting the song
-        await conn.query('DELETE FROM user_likes WHERE song_id = ?', [songId]).catch(() => {});
-        await conn.query('DELETE FROM playlist_songs WHERE song_id = ?', [songId]).catch(() => {});
-        await conn.query('DELETE FROM album_tracks WHERE song_id = ?', [songId]).catch(() => {});
-        await conn.query('DELETE FROM user_listening_history WHERE song_id = ?', [songId]).catch(() => {});
+        const ignoreErr = (err) => console.error('[FK Cleanup Warning]', err.message);
+        await conn.query('DELETE FROM user_likes WHERE song_id = ?', [songId]).catch(ignoreErr);
+        await conn.query('DELETE FROM playlist_songs WHERE song_id = ?', [songId]).catch(ignoreErr);
+        await conn.query('DELETE FROM album_tracks WHERE song_id = ?', [songId]).catch(ignoreErr);
+        await conn.query('DELETE FROM user_listening_history WHERE song_id = ?', [songId]).catch(ignoreErr);
 
         await conn.query('DELETE FROM songs WHERE song_id = ?', [songId]);
 
@@ -824,8 +825,12 @@ router.delete('/songs/:id', authMiddleware, requireRole('admin'), async (req, re
         return res.json({ success: true, message: 'Song deleted', undo_window_minutes: UNDO_WINDOW_MINUTES });
     } catch (err) {
         await conn.rollback();
-        console.error(err);
-        return res.status(500).json({ message: 'Error deleting song', error: err.message });
+        console.error('[Delete Song Error]', err);
+        return res.status(500).json({ 
+            message: 'Error deleting song: ' + err.message, 
+            error: err.message,
+            stack: err.stack 
+        });
     } finally {
         conn.release();
     }
