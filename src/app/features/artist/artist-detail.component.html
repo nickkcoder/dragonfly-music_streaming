@@ -16,31 +16,29 @@
     <p class="status error" *ngIf="songsError">{{ songsError }}</p>
 
     <div class="album-list" *ngIf="!loadingSongs && !songsError">
-      <article class="album-card" *ngFor="let album of artistAlbums">
+      <article
+        class="album-card album-card-link"
+        *ngFor="let album of artistAlbums"
+        [routerLink]="['/artist/album', album.id]"
+        role="link"
+        tabindex="0"
+        [attr.aria-label]="'Open album: ' + album.title"
+        (keydown.enter)="navigateToAlbum(album.id)"
+      >
         <div class="album-header">
           <img [src]="album.coverImage || artistImage || 'assets/favicon.ico'" [alt]="album.title">
           <div>
             <h3>{{ album.title }}</h3>
             <p>{{ album.releaseDate ? (album.releaseDate | date:'mediumDate') : 'No release date' }}</p>
           </div>
+          <svg class="album-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
         </div>
 
-        <div class="song-list">
-          <div class="song-row song-row-clickable" *ngFor="let song of album.tracks" (click)="playSong(song)">
-            <div class="song-main">
-              <img class="song-mini-cover" [src]="song.coverImage || album.coverImage || artistImage || 'assets/favicon.ico'" [alt]="song.title">
-              <div>
-                <h3>
-                  <span class="song-title-text">{{ song.trackNumber ? (song.trackNumber + '. ') : '' }}{{ song.title }}</span>
-                </h3>
-              </div>
-            </div>
-            <div class="song-actions">
-              <button type="button" (click)="playNext(song, $event)">Play next</button>
-              <button type="button" (click)="addToQueue(song, $event)">Add to queue</button>
-            </div>
-          </div>
-        </div>
+        <p class="album-track-count">{{ album.tracks.length }} track{{ album.tracks.length !== 1 ? 's' : '' }} — click to view</p>
       </article>
       <p class="empty" *ngIf="!artistAlbums.length">No albums found for this artist.</p>
     </div>

@@ -7,6 +7,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'account'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'account'"
@@ -79,6 +80,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'theme'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'theme'"
@@ -108,6 +110,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'privacy'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'privacy'"
@@ -146,6 +149,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'notifications'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'notifications'"
@@ -188,6 +192,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'playback'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'playback'"
@@ -226,6 +231,7 @@
   <div class="settings-card" *ngIf="artistGranted || (isArtist$ | async)">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'artist-tools'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'artist-tools'"
@@ -273,6 +279,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'support'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'support'"
@@ -300,12 +307,14 @@
         <label for="support-email">Contact Email (optional)</label>
         <input id="support-email" type="email" [(ngModel)]="supportEmail" name="support_email" [disabled]="supportBusy" autocomplete="email">
       </div>
-      <button type="button" class="save-btn" (click)="submitSupport()" [disabled]="supportBusy">
-        Send Support Request
-      </button>
-      <button type="button" class="save-btn" (click)="openBugModal()" style="margin-left: 10px;">
-        Report a Bug (Advanced)
-      </button>
+      <div class="btn-row">
+        <button type="button" class="save-btn" (click)="submitSupport()" [disabled]="supportBusy">
+          Send Support Request
+        </button>
+        <button type="button" class="save-btn" (click)="openBugModal()">
+          Report a Bug (Advanced)
+        </button>
+      </div>
       <p class="panel-status ok" *ngIf="supportOk" role="status" aria-live="polite">{{ supportOk }}</p>
       <p class="panel-status error" *ngIf="supportError" role="alert" aria-live="assertive">{{ supportError }}</p>
     </div>
@@ -314,6 +323,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'export'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'export'"
@@ -338,6 +348,7 @@
   <div class="settings-card" *ngIf="!(artistGranted || (isArtist$ | async))">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'artist'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'artist'"
@@ -380,6 +391,7 @@
   <div class="settings-card">
     <div
       class="settings-row"
+      [class.active]="activePanel === 'password'"
       role="button"
       tabindex="0"
       [attr.aria-expanded]="activePanel === 'password'"

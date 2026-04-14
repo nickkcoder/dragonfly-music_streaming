@@ -35,15 +35,20 @@
 </section>
 
 <section class="discover-content" aria-label="Results">
-  <p
-    class="status loading"
+  <div
+    class="skeleton-grid"
     *ngIf="loading"
     role="status"
     aria-live="polite"
     aria-label="Loading discover data"
   >
-    Loading discover data...
-  </p>
+    <div class="skeleton-panel">
+      <div class="skeleton-artist-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+    <div class="skeleton-panel">
+      <div class="skeleton-song-row" *ngFor="let i of [1,2,3,4,5]"></div>
+    </div>
+  </div>
   <p
     class="status error"
     *ngIf="error"

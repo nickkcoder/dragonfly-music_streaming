@@ -11,12 +11,12 @@ export class HomeComponent implements OnInit {
   greeting = 'Good evening';
   
   quickPicks = [
-    { title: 'Liked Songs', img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&q=80', link: '/profile' },
-    { title: 'Daily Mix 1', img: 'https://images.unsplash.com/photo-1493225457124-a1a2a5f5f4b5?w=300&q=80', link: '/discover' },
-    { title: 'Release Radar', img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&q=80', link: '/discover' },
-    { title: 'Discover Weekly', img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&q=80', link: '/discover' },
-    { title: 'Repeat Rewind', img: 'https://images.unsplash.com/photo-1483032469466-b937c425697b?w=300&q=80', link: '/discover' },
-    { title: 'Top Hits 2026', img: 'https://images.unsplash.com/photo-1611078864700-ce1e2fedb2b4?w=300&q=80', link: '/discover' }
+    { title: 'Liked Songs',      img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&q=80', link: '/playlist/liked' },
+    { title: 'Daily Mix 1',      img: 'https://images.unsplash.com/photo-1493225457124-a1a2a5f5f4b5?w=300&q=80', link: '/discover' },
+    { title: 'Release Radar',    img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&q=80', link: '/discover' },
+    { title: 'Discover Weekly',  img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&q=80', link: '/discover' },
+    { title: 'Repeat Rewind',    img: 'https://images.unsplash.com/photo-1483032469466-b937c425697b?w=300&q=80', link: '/discover' },
+    { title: 'Top Hits 2026',    img: 'https://images.unsplash.com/photo-1611078864700-ce1e2fedb2b4?w=300&q=80', link: '/discover' }
   ];
 
   madeForYou = [
@@ -48,10 +48,9 @@ export class HomeComponent implements OnInit {
   }
 
   loadTrending() {
-    this.songService.getAllSongs().subscribe({
+    this.songService.getTrending(10).subscribe({
       next: (songs) => {
-        // Take up to 5 tracks as 'Trending'
-        this.trendingSongs = (songs || []).slice(0, 5);
+        this.trendingSongs = songs || [];
         this.trendingLoading = false;
       },
       error: () => {
@@ -67,7 +66,10 @@ export class HomeComponent implements OnInit {
       title: song.title,
       artist: song.artist_name || song.artist || 'Unknown Artist',
       src: song.s3_url || song.file_url,
-      coverImage: song.cover_url || ''
+      coverImage: song.cover_url || song.cover_image || ''
     });
+    // Record play event to keep trending data fresh
+    const id = song.song_id || song.id;
+    if (id) this.songService.recordPlay(id);
   }
 }

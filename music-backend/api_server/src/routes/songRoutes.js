@@ -404,8 +404,83 @@ router.post(
     }
 );
 
+// GET TRENDING SONGS — ranked by total likes across all users (public)
+router.get('/trending', async (req, res) => {
+    try {
+        await ensureLikesTables();
+        const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 50);
+        const { selectClause, joins } = await buildSongSelect();
+
+        // Primary: songs ordered by total like count descending
+        const [rows] = await pool.query(
+            `SELECT ${selectClause},
+                    COUNT(ul.song_id) AS like_count
+             FROM songs s
+             ${joins}
+             LEFT JOIN user_likes ul ON ul.song_id = s.song_id
+             GROUP BY s.song_id
+             ORDER BY like_count DESC, s.uploaded_at DESC
+             LIMIT ?`,
+            [limit]
+        );
+
+        // If no likes exist yet, fall back to newest uploads
+        if (rows.length === 0) {
+            const { selectClause: sc2, joins: j2, orderBy } = await buildSongSelect();
+            const [fallback] = await pool.query(
+                `SELECT ${sc2}, 0 AS like_count
+                 FROM songs s
+                 ${j2}
+                 ORDER BY ${orderBy} DESC
+                 LIMIT ?`,
+                [limit]
+            );
+            return res.json({ songs: fallback, source: 'newest' });
+        }
+
+        return res.json({ songs: rows, source: 'likes' });
+    } catch (err) {
+        console.error('[trending]', err);
+        return res.status(500).json({ message: 'Error fetching trending songs', error: err.message });
+    }
+});
+
+// RECORD A PLAY EVENT (auth, optional — fails silently)
+router.post('/:id/play', authMiddleware, async (req, res) => {
+    try {
+        const songId = Number(req.params.id);
+        const userId = req.user?.user_id;
+
+        if (!Number.isInteger(songId) || songId <= 0 || !userId) {
+            return res.status(400).json({ message: 'Invalid song or user' });
+        }
+
+        await pool.query(
+            `CREATE TABLE IF NOT EXISTS user_listening_history (
+                history_id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                song_id INT NOT NULL,
+                listened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_ulh_song (song_id),
+                INDEX idx_ulh_user (user_id)
+            )`
+        );
+
+        await pool.query(
+            'INSERT INTO user_listening_history (user_id, song_id) VALUES (?, ?)',
+            [userId, songId]
+        );
+
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('[play]', err);
+        return res.status(500).json({ message: 'Error recording play', error: err.message });
+    }
+});
+
 // GET SONG BY ID (public)
 router.get('/:id', songController.getSong);
+
 
 // CREATE SONG (artist or admin)
 router.post(

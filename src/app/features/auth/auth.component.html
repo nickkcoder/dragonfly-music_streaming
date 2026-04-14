@@ -28,6 +28,25 @@
       </button>
     </div>
 
+    <div class="auth-tabs" role="tablist" aria-label="Switch between login and register">
+      <button
+        type="button"
+        class="auth-tab"
+        role="tab"
+        [class.active]="isLogin"
+        [attr.aria-selected]="isLogin"
+        (click)="isLogin = true; showPassword = false"
+      >Login</button>
+      <button
+        type="button"
+        class="auth-tab"
+        role="tab"
+        [class.active]="!isLogin"
+        [attr.aria-selected]="!isLogin"
+        (click)="isLogin = false; showPassword = false"
+      >Register</button>
+    </div>
+
     <form (ngSubmit)="submit()" [attr.aria-label]="isLogin ? 'Login form' : 'Registration form'">
 
       <!-- Error / success message — announced live -->
@@ -162,16 +181,7 @@
 
     </form>
 
-    <div class="switch-mode">
-      <button
-        type="button"
-        class="switch-mode-btn"
-        (click)="toggleMode()"
-        [attr.aria-label]="isLogin ? 'Switch to create account' : 'Switch to log in'"
-      >
-        {{ isLogin ? 'Create account' : 'Already have an account?' }}
-      </button>
-    </div>
+
 
   </div>
 

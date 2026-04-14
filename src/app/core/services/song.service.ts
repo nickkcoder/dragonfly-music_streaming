@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { tap } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -24,9 +23,25 @@ export class SongService {
   }
 
   getLikedSongs(): Observable<any[]> {
-    return this.tryGet<any[]>([
-      'api/songs/liked'
-    ]);
+    return this.tryGet<any>(['api/songs/liked']).pipe(
+      map((payload: any) => Array.isArray(payload) ? payload : (payload?.songs ?? []))
+    );
+  }
+
+  getTrending(limit = 10): Observable<any[]> {
+    return this.api.get<any>(`api/songs/trending?limit=${limit}`).pipe(
+      map((payload: any) => Array.isArray(payload) ? payload : (payload?.songs ?? [])),
+      catchError(() => this.getAllSongs().pipe(
+        map((songs: any[]) => songs.slice(0, limit))
+      ))
+    );
+  }
+
+  /** Fire-and-forget: records a play event so trending stays fresh. Never throws. */
+  recordPlay(songId: string | number): void {
+    this.api.post(`api/songs/${songId}/play`, {}).pipe(
+      catchError(() => of(null))
+    ).subscribe();
   }
 
   likeSong(songId: number | string): Observable<any> {

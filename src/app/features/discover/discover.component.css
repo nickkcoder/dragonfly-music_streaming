@@ -1,5 +1,5 @@
 .discover-hero {
-  min-height: 45vh;
+  min-height: 36vh;
   background-color: var(--bg-color);
   background-image: var(--bg-gradient);
   display: flex;
@@ -8,7 +8,7 @@
   justify-content: center;
   text-align: center;
   color: var(--text-main);
-  padding: 100px 8vw 40px;
+  padding: 100px 8vw 36px;
 }
 
 .discover-hero h1 {
@@ -48,7 +48,20 @@
   border: 1px solid var(--surface-border);
   color: var(--text-main);
   border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  padding: 12px 36px 12px 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.discover-controls select:hover,
+.discover-controls select:focus {
+  border-color: var(--accent-primary);
+  outline: none;
 }
 
 .discover-content {
@@ -158,12 +171,12 @@
 }
 
 .song-mini-cover {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-sm);
   object-fit: cover;
   border: 1px solid var(--surface-border);
-  flex: 0 0 28px;
+  flex: 0 0 44px;
 }
 
 .song-row h3 {
@@ -222,6 +235,53 @@
   }
 
   .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== SKELETON LOADING ===== */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 18px;
+}
+
+.skeleton-panel {
+  background: var(--surface-color);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.skeleton-artist-card {
+  height: 140px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--surface-color) 25%, var(--surface-border) 50%, var(--surface-color) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-artist-card:nth-child(even) { animation-delay: 0.15s; }
+
+.skeleton-song-row {
+  height: 52px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--surface-color) 25%, var(--surface-border) 50%, var(--surface-color) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-song-row:nth-child(even) { animation-delay: 0.2s; }
+
+@media (max-width: 960px) {
+  .skeleton-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -62,15 +62,22 @@
       <h2 id="trending-heading" class="section-title">Trending Tracks</h2>
       
       <div class="song-list" role="list">
-        <p
+        <div
           *ngIf="trendingLoading"
-          class="status-msg"
+          class="skeleton-list"
           role="status"
           aria-live="polite"
           aria-label="Loading trending tracks"
         >
-          Fetching trending hits...
-        </p>
+          <div class="skeleton-row" *ngFor="let i of [1,2,3,4,5]">
+            <div class="skeleton-num"></div>
+            <div class="skeleton-cover"></div>
+            <div class="skeleton-meta">
+              <div class="skeleton-line wide"></div>
+              <div class="skeleton-line narrow"></div>
+            </div>
+          </div>
+        </div>
         <p
           *ngIf="!trendingLoading && !trendingSongs.length"
           class="status-msg empty"
@@ -104,7 +111,17 @@
             </div>
           </div>
           <div class="song-actions">
-            <span class="duration" aria-label="Duration 3 minutes 24 seconds">3:24</span>
+            <span
+              class="like-count"
+              *ngIf="song.like_count > 0"
+              [attr.aria-label]="song.like_count + ' likes'"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              {{ song.like_count }}
+            </span>
+            <span class="duration" [attr.aria-label]="song.duration ? 'Duration: ' + song.duration : 'Duration unknown'">{{ song.duration || '—' }}</span>
           </div>
         </div>
       </div>

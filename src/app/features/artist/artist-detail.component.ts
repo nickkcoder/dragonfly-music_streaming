@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ArtistService } from '../../core/services/artist.service';
 import { AuthService } from '../../core/services/auth.service';
 import { MediaService } from '../../core/services/media.service';
@@ -36,6 +36,7 @@ export class ArtistDetailComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private artistService: ArtistService,
     private songService: SongService,
     private playerService: PlayerService,
@@ -112,6 +113,10 @@ export class ArtistDetailComponent {
     }
 
     saveUrl(directUrl);
+  }
+
+  navigateToAlbum(albumId: string): void {
+    this.router.navigate(['/artist/album', albumId]);
   }
 
   playSong(song: { id: string; title: string; fileUrl: string; coverImage?: string }) {

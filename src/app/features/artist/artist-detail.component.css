@@ -80,6 +80,38 @@
   padding: 10px;
 }
 
+.album-card-link {
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  display: block;
+}
+
+.album-card-link:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+}
+
+.album-card-link:hover .album-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+  color: var(--accent-primary);
+}
+
+.album-arrow {
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0.35;
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.album-track-count {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  opacity: 0.55;
+}
+
 .album-header {
   display: flex;
   align-items: center;
