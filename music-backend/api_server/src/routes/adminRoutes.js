@@ -568,6 +568,16 @@ router.delete('/artists/:artist_id', authMiddleware, requireRole('admin'), async
             }
         });
 
+        // Clear FK refs for every song belonging to this artist before deleting
+        if (songRows.length > 0) {
+            const songIds = songRows.map((s) => s.song_id);
+            const placeholders = songIds.map(() => '?').join(',');
+            await conn.query(`DELETE FROM user_likes WHERE song_id IN (${placeholders})`, songIds);
+            await conn.query(`DELETE FROM playlist_songs WHERE song_id IN (${placeholders})`, songIds);
+            await conn.query(`DELETE FROM album_tracks WHERE song_id IN (${placeholders})`, songIds);
+            await conn.query(`DELETE FROM user_listening_history WHERE song_id IN (${placeholders})`, songIds).catch(() => {});
+        }
+
         await conn.query('DELETE FROM songs WHERE artist_id = ?', [artist_id]);
         await conn.query('DELETE FROM artist_acc WHERE artist_id = ?', [artist_id]);
         await conn.query('DELETE FROM artist WHERE artist_id = ?', [artist_id]);
@@ -801,6 +811,12 @@ router.delete('/songs/:id', authMiddleware, requireRole('admin'), async (req, re
             deletedBy: req.user.user_id,
             payload: { song: songRows[0] }
         });
+
+        // Clear FK child refs before deleting the song
+        await conn.query('DELETE FROM user_likes WHERE song_id = ?', [songId]);
+        await conn.query('DELETE FROM playlist_songs WHERE song_id = ?', [songId]);
+        await conn.query('DELETE FROM album_tracks WHERE song_id = ?', [songId]);
+        await conn.query('DELETE FROM user_listening_history WHERE song_id = ?', [songId]).catch(() => {});
 
         await conn.query('DELETE FROM songs WHERE song_id = ?', [songId]);
 
